@@ -54,13 +54,27 @@ async function buscarServicoPorId(req, res) {
 // POST /servicos
 async function criarServico(req, res) {
   const { nome, duracao, preco, tipoId } = req.body;
+
   try {
+    // التحقق من وجود خدمة بنفس الاسم
+    const servicoExistente = await Servico.findOne({
+      where: { nome },
+    });
+
+    if (servicoExistente) {
+      return res.status(400).json({
+        erro: "Já existe um serviço cadastrado com esse nome.",
+      });
+    }
+
+    // إنشاء الخدمة الجديدة
     const novoServico = await Servico.create({
       nome,
       duracao,
       preco,
       tipoId,
     });
+
     res.status(201).json(novoServico);
   } catch (error) {
     res.status(400).json({

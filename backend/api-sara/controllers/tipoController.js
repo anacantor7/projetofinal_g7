@@ -40,6 +40,18 @@ async function buscarTipoPorId(req, res) {
 // POST /tipos
 async function criarTipo(req, res) {
   try {
+    // التحقق من وجود نوع خدمة بنفس الاسم
+    const tipoExistente = await Tipo.findOne({
+      where: { nome: req.body.nome },
+    });
+
+    if (tipoExistente) {
+      return res.status(400).json({
+        erro: "Já existe um tipo de serviço cadastrado com esse nome.",
+      });
+    }
+
+    // إنشاء النوع الجديد
     const novoTipo = await Tipo.create(req.body);
     res.status(201).json(novoTipo);
   } catch (error) {

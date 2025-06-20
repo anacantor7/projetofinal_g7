@@ -51,6 +51,21 @@ async function buscarProfissionalPorId(req, res) {
 // POST /profissionais
 async function criarProfissional(req, res) {
   try {
+    // تحقق من وجود مصفف بنفس الاسم + الهاتف
+    const profissionalExistente = await Profissional.findOne({
+      where: {
+        nome: req.body.nome,
+        telefone: req.body.telefone,
+      },
+    });
+
+    if (profissionalExistente) {
+      return res.status(400).json({
+        erro: "Já existe um profissional cadastrado com esse nome e telefone.",
+      });
+    }
+
+    // إنشاء المصفف الجديد
     const novo = await Profissional.create(req.body);
     res.status(201).json(novo);
   } catch (error) {

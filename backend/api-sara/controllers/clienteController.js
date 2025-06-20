@@ -46,8 +46,22 @@ async function buscarClientePorId(req, res) {
 // POST /clientes
 async function criarCliente(req, res) {
   const { nome, telefone, observacoes } = req.body;
+
   try {
+    // التحقق إن كان العميل مسجل مسبقًا بنفس الاسم ورقم الهاتف
+    const clienteExistente = await Cliente.findOne({
+      where: { nome, telefone },
+    });
+
+    if (clienteExistente) {
+      return res.status(400).json({
+        erro: "Já existe um cliente cadastrado com esse nome e telefone.",
+      });
+    }
+
+    // إنشاء العميل إذا لم يكن موجودًا
     const novoCliente = await Cliente.create({ nome, telefone, observacoes });
+
     res.status(201).json(novoCliente);
   } catch (error) {
     res.status(400).json({

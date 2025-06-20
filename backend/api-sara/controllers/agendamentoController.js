@@ -84,21 +84,6 @@ async function criarAgendamento(req, res) {
       });
     }
 
-    // التحقق من أن التاريخ يقع في يوم من الاثنين إلى السبت
-    const dataFormatada = new Date(`${data}T00:00:00`);
-
-    if (isNaN(dataFormatada)) {
-      return res.status(400).json({ erro: "Data inválida" });
-    }
-
-    const diaDaSemana = dataFormatada.getDay(); // 0 (domingo) até 6 (sábado)
-
-    if (diaDaSemana === 0) {
-      return res.status(400).json({
-        erro: "Não é possível agendar aos domingos. Funcionamos de segunda a sábado.",
-      });
-    }
-
     // التحقق من العميل نشط
     const cliente = await Cliente.findByPk(clienteId);
     if (!cliente || !cliente.ativo) {
