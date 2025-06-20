@@ -1,13 +1,11 @@
 ## 📘 Documentação da API
 
-API desenvolvida para gerenciamento de clientes, serviços, profissionais e agendamentos em salões de beleza.
+API desenvolvida para gerenciamento de clientes, serviços, tipos de serviços, profissionais e agendamentos em salões de beleza.
 
-### 🌐 Base URL
+## 🌐 Base URL da API
 
-```
-Local: http://localhost:3000
-Online (Render): [em breve]
-```
+- Local: [http://localhost:3000](http://localhost:3000)
+- Online (Render): [https://agenda-inteligente-backend.onrender.com](https://agenda-inteligente-backend.onrender.com)
 
 ---
 
