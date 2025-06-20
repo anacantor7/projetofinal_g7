@@ -1,9 +1,6 @@
 // ← أولاً: تحميل المتغيرات البيئية
 require("dotenv").config();
 
-// ← ثانياً: طباعة البيئة للتأكد
-// console.log("Ambiente:", process.env.NODE_ENV);
-
 const express = require("express");
 const cors = require("cors");
 
@@ -17,9 +14,10 @@ const app = express();
 const sequelize = require("./database/db");
 const Cliente = require("./models/clienteModel");
 const Servico = require("./models/servicoModel");
+const Tipo = require("./models/tipoModel");
 const Profissional = require("./models/profissionalModel");
 const Agendamento = require("./models/agendamentoModel");
-const Tipo = require("./models/tipoModel");
+
 
 //  علاقات Sequelize
 // Cliente 1:N Agendamento
@@ -37,7 +35,7 @@ Agendamento.belongsTo(Profissional, { foreignKey: "profissionalId" });
 Tipo.hasMany(Servico, { foreignKey: "tipoId" });
 Servico.belongsTo(Tipo, { foreignKey: "tipoId" });
 
-// مزامنة Sequelize مع SQLite
+// مزامنة قاعدة البيانات Sequelize مع SQLite
 sequelize
   .sync()
   .then(() => {
@@ -55,7 +53,9 @@ app.use("/tipos", tipoRoutes);
 app.use("/profissionais", profissionalRoutes);
 app.use("/agendamentos", agendamentoRoutes);
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
+console.log("Ambiente:", process.env.NODE_ENV);
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
