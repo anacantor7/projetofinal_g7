@@ -17,9 +17,13 @@ Com ela, é possível cadastrar clientes, serviços, profissionais e agendamento
 - Filtros: busca de agendamentos por data, cliente, profissional e horário
 - Prevenção de conflitos de horário para o mesmo profissional
 - Controle de visibilidade com o campo `ativo: boolean` (sem exclusão definitiva)
-- **Horário de funcionamento configurado:** agendamentos permitidos apenas das **09h às 18h**, de **segunda a sábado**
-- **Bloqueio de agendamentos aos domingos**
+- **Horário de funcionamento configurado:** agendamentos permitidos apenas entre **09h e 18h**
 - **Validação automática da especialidade do profissional** conforme o tipo do serviço
+- Validações para evitar cadastros duplicados:
+  - Cliente com mesmo nome + telefone
+  - Profissional com mesmo nome + telefone
+  - Serviço com nome repetido
+  - Tipo de serviço com nome repetido
 
 ---
 
@@ -104,76 +108,7 @@ Com ela, é possível cadastrar clientes, serviços, profissionais e agendamento
 
 ---
 
-## 📘 Documentação da API
-
-### 🌐 Base URL
-
-```
-Local: http://localhost:3000
-Online (Render): [em breve]
-```
-
----
-
-## 🔹 Clientes
-
-- `GET /clientes`
-- `GET /clientes/:id`
-- `POST /clientes`
-- `PUT /clientes/:id`
-- `PUT /clientes/:id/ativo`
-- `DELETE /clientes/:id`
-
----
-
-## 🔹 Serviços
-
-- `GET /servicos`
-- `GET /servicos/:id`
-- `POST /servicos`
-- `PUT /servicos/:id`
-- `PUT /servicos/:id/ativo`
-- `DELETE /servicos/:id`
-
----
-
-## 🔹 Tipos de Serviço
-
-- `GET /tipos`
-- `GET /tipos/:id`
-- `POST /tipos`
-
----
-
-## 🔹 Profissionais
-
-- `GET /profissionais`
-- `GET /profissionais/:id`
-- `POST /profissionais`
-- `PUT /profissionais/:id`
-- `PUT /profissionais/:id/ativo`
-
----
-
-## 🔹 Agendamentos
-
-- `GET /agendamentos`
-
-  - Suporta filtros: `?data=`, `?clienteId=`, `?profissionalId=`, `?data=...&hora=...`
-
-- `GET /agendamentos/:id`
-- `POST /agendamentos`
-- `PUT /agendamentos/:id`
-- `DELETE /agendamentos/:id`
-
-> ⚠️ A API previne a criação de agendamentos duplicados para o mesmo profissional, data e horário.
-
----
-
-## 💡 Observações
-
-- Todos os endpoints utilizam `Content-Type: application/json`
-- A API é pública (sem autenticação)
+📘 A documentação completa da API está disponível em [`docs/API.md`](./docs/API.md)
 
 ---
 
@@ -184,3 +119,7 @@ As ideias abaixo ainda não foram implementadas, mas podem ser consideradas em v
 - 🔐 Adicionar autenticação e login (visual já esboçado no Figma)
 - 📩 Enviar confirmações de agendamento por e-mail
 - 🧪 Testes automatizados com Jest no back-end
+- ⏰ Impedir agendamentos sobrepostos com base na duração dos serviços, garantindo que o(a) profissional esteja disponível durante todo o período da execução
+- 🕒 Impedir agendamentos com datas passadas, garantindo que todos os horários cadastrados sejam futuros
+- 📅 Definir dias úteis e feriados como indisponíveis para agendamentos futuros
+- 💳 Integração com sistema de pagamentos (ex: Pix, cartão) para serviços pagos online
