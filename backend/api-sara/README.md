@@ -57,9 +57,11 @@ Com ela, é possível cadastrar clientes, serviços, profissionais e agendamento
 
 ## 📡 Acesso online (após deploy)
 
-> Em breve, a API estará disponível online através do Render, permitindo que a interface em React e testes externos (como Postman ou Insomnia) possam acessar os dados remotamente.
+> A API está disponível online através do Render, permitindo que a interface em React e testes externos (como Postman ou Insomnia) possam acessar os dados remotamente.
 
-🔗 URL da API no Render (será adicionado aqui após o deploy):
+🔗 URL da API no Render: https://agenda-inteligente-backend.onrender.com
+
+⚠️ Obs: Como é uma instância gratuita, o servidor pode levar alguns segundos para "acordar" após um tempo inativo.
 
 ---
 
