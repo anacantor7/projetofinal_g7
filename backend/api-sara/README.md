@@ -118,10 +118,16 @@ Com ela, é possível cadastrar clientes, serviços, profissionais e agendamento
 
 As ideias abaixo ainda não foram implementadas, mas podem ser consideradas em versões futuras:
 
-- 🔐 Adicionar autenticação e login (visual já esboçado no Figma)
+- 🔐 Adicionar autenticação e login para proteger o acesso ao sistema e permitir que apenas usuários autorizados realizem alterações (visual já esboçado no Figma)
 - 📩 Enviar confirmações de agendamento por e-mail
-- 🧪 Testes automatizados com Jest no back-end
+- 🧪 Implementar testes automatizados com Jest no back-end, garantindo maior estabilidade
+- 📆 Criar painel individual para que cada profissional visualize seus próprios agendamentos conforme sua especialidade
 - ⏰ Impedir agendamentos sobrepostos com base na duração dos serviços, garantindo que o(a) profissional esteja disponível durante todo o período da execução
-- 🕒 Impedir agendamentos com datas passadas, garantindo que todos os horários cadastrados sejam futuros
-- 📅 Definir dias úteis e feriados como indisponíveis para agendamentos futuros
+- 🕒 Impedir agendamentos com datas passadas
+- 📅 Bloquear dias não úteis e feriados para novos agendamentos
+- 🗃️ Migrar de SQLite para um banco de dados relacional com armazenamento persistente (como PostgreSQL), garantindo que os dados não sejam perdidos após reinicializações no ambiente de produção.
+- 💼 Adicionar sistema de gestão financeira para os profissionais do salão, com:
+  - Registro de salários, bônus, descontos e comissões, com base em critérios como número de atendimentos e frequência de trabalho (presenças e ausências)
+  - Reconhecimento mensal de desempenho (ex: prêmio para o profissional destaque do mês)
 - 💳 Integração com sistema de pagamentos (ex: Pix, cartão) para serviços pagos online
+- 🔧 Reestruturar a API para seguir padrões REST de forma mais clara, com autenticação via JWT e organização modular (controllers, services, middlewares), visando maior segurança e escalabilidade do sistema
