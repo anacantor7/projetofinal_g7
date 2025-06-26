@@ -1,11 +1,11 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../database/db"); // الاتصال بقاعدة البيانات
+const sequelize = require("../database/db_bkp"); // الاتصال بقاعدة البيانات
 
 const Agendamento = sequelize.define("Agendamento", {
   profissionalId: {
-  type: DataTypes.INTEGER,
-  allowNull: false,
-},
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
   data: {
     type: DataTypes.DATEONLY,
     allowNull: false,

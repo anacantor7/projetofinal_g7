@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../database/db");
+const sequelize = require("../database/db_bkp");
 
-const Cliente = sequelize.define("Cliente", {
+const Profissional = sequelize.define("Profissional", {
   nome: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -10,9 +10,9 @@ const Cliente = sequelize.define("Cliente", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  observacoes: {
-    type: DataTypes.TEXT,
-    allowNull: true,
+  especialidade: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   ativo: {
     type: DataTypes.BOOLEAN,
@@ -20,4 +20,4 @@ const Cliente = sequelize.define("Cliente", {
   },
 });
 
-module.exports = Cliente;
+module.exports = Profissional;

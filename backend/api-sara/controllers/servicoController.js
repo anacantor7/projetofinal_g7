@@ -1,5 +1,5 @@
-const Servico = require("../models/servicoModel");
-const Tipo = require("../models/tipoModel");
+// const Servico = require("../models/servicoModel");
+// const Tipo = require("../models/tipoModel");
 
 // GET /servicos
 async function listarServicos(req, res) {
