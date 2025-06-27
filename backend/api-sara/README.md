@@ -40,8 +40,8 @@ Com ela, é possível cadastrar clientes, serviços, profissionais e agendamento
 
 ### 🎨 Front-End
 
-- React (a ser desenvolvido)
-- Figma (protótipo visual)
+- React 
+- Figma 
 
 ---
 
@@ -49,8 +49,8 @@ Com ela, é possível cadastrar clientes, serviços, profissionais e agendamento
 
 | Nome          | Responsável por                         |
 | ------------- | --------------------------------------- |
-| **Ana Maria** | Design da interface (Figma) + Front-End |
-| **Sara**      | API (Node.js/Express) + Rotas + Banco   |
+| **Ana Maria** | Design da interface (Figma) + Front-End(React) |
+| **Sara**      | API (Node.js/Express) + Rotas  |
 | **Nuvia**     | Banco de dados (SQLite) + Testes        |
 
 ---
