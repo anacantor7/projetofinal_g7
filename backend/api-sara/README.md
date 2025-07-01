@@ -49,7 +49,7 @@ Com ela, é possível cadastrar clientes, serviços, profissionais e agendamento
 
 | Nome          | Responsável por                         |
 | ------------- | --------------------------------------- |
-| **Ana Maria** | Design da interface (Figma) + Front-End(React) |
+| **Ana Maria** | Design da interface (Figma) + Front-End (React) |
 | **Sara**      | API (Node.js/Express) + Rotas  |
 | **Nuvia**     | Banco de dados (SQLite) + Testes        |
 
@@ -116,7 +116,7 @@ Com ela, é possível cadastrar clientes, serviços, profissionais e agendamento
 
 ## 🔮 Melhorias futuras
 
-As ideias abaixo ainda não foram implementadas, mas podem ser consideradas em versões futuras:
+As ideias abaixo ainda não foram implementadas, mas podem ser consideradas em versões futuras para tornar o sistema mais completo, seguro e escalável:
 
 - 🔐 Adicionar autenticação e login para proteger o acesso ao sistema e permitir que apenas usuários autorizados realizem alterações (visual já esboçado no Figma)
 - 📩 Enviar confirmações de agendamento por e-mail
