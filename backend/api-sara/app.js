@@ -12,18 +12,17 @@ const tipoRoutes = require("./routes/tipoRoutes");
 
 const app = express();
 
-// const sequelize = require("./database/db");
+const sequelize = require("./database/db");
 
 // تحميل النماذج (Models)
-/* const Cliente = require("./models/clienteModel");
+const Cliente = require("./models/clienteModel");
 const Servico = require("./models/servicoModel");
 const Tipo = require("./models/tipoModel");
 const Profissional = require("./models/profissionalModel");
 const Agendamento = require("./models/agendamentoModel");
-*/
 
 //  علاقات Sequelize
-/* Cliente 1:N Agendamento
+// Cliente 1:N Agendamento
 Cliente.hasMany(Agendamento, { foreignKey: "clienteId" });
 Agendamento.belongsTo(Cliente, { foreignKey: "clienteId" });
 
@@ -38,17 +37,17 @@ Agendamento.belongsTo(Profissional, { foreignKey: "profissionalId" });
 // Tipo (One-to-Many)Servico || "Tipo 1 : N Servicos"
 Tipo.hasMany(Servico, { foreignKey: "tipoId" });
 Servico.belongsTo(Tipo, { foreignKey: "tipoId" });
-*/
 
 // مزامنة قاعدة البيانات Sequelize مع SQLite
-/* sequelize.sync()
- .then(() => {
- console.log("Banco de dados sincronizado com sucesso!");
+sequelize
+  .sync()
+  .then(() => {
+    console.log("Banco de dados sincronizado com sucesso!");
   })
   .catch((err) => {
     console.error("Erro ao sincronizar o banco de dados:", err);
-   });
-*/
+  });
+
 app.use(cors());
 app.use(express.json());
 

@@ -40,18 +40,18 @@ Com ela, é possível cadastrar clientes, serviços, profissionais e agendamento
 
 ### 🎨 Front-End
 
-- React 
-- Figma 
+- React
+- Figma
 
 ---
 
 ## 👩‍💻 Time de desenvolvimento
 
-| Nome          | Responsável por                         |
-| ------------- | --------------------------------------- |
+| Nome          | Responsável por                                 |
+| ------------- | ----------------------------------------------- |
 | **Ana Maria** | Design da interface (Figma) + Front-End (React) |
-| **Sara**      | API (Node.js/Express) + Rotas  |
-| **Nuvia**     | Banco de dados (SQLite) + Testes        |
+| **Sara**      | API (Node.js/Express) + Rotas                   |
+| **Nuvia**     | Banco de dados (SQLite) + Testes                |
 
 ---
 
@@ -110,7 +110,7 @@ Com ela, é possível cadastrar clientes, serviços, profissionais e agendamento
 
 ---
 
-📘 A documentação completa da API está disponível em [`docs/API.md`](./docs/API.md)
+📘 A documentação completa da API está disponível em [`API.md`](./backend/api-sara/docs/API.md)
 
 ---
 

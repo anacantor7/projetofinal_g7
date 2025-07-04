@@ -1,4 +1,4 @@
-// const Cliente = require("../models/clienteModel");
+ const Cliente = require("../models/clienteModel");
 
 // GET /clientes
 async function listarClientes(req, res) {

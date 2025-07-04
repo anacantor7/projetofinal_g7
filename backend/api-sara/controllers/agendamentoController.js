@@ -1,9 +1,9 @@
-/* const Agendamento = require("../models/agendamentoModel");
+const Agendamento = require("../models/agendamentoModel");
 const Cliente = require("../models/clienteModel");
 const Servico = require("../models/servicoModel");
 const Tipo = require("../models/tipoModel");
 const Profissional = require("../models/profissionalModel");
-*/
+
 
 // GET /agendamentos
 async function listarAgendamentos(req, res) {

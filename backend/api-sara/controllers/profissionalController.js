@@ -1,4 +1,4 @@
-// const Profissional = require("../models/profissionalModel");
+const Profissional = require("../models/profissionalModel");
 
 // GET /profissionais
 async function listarProfissionais(req, res) {

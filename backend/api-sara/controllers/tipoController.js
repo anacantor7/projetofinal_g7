@@ -1,4 +1,4 @@
-// const Tipo = require("../models/tipoModel");
+const Tipo = require("../models/tipoModel");
 
 // GET /tipos
 async function listarTipos(req, res) {
