@@ -7,6 +7,7 @@ const {
   atualizarCliente,
   toggleClienteAtivo,
   deletarCliente,
+  loginCliente,
 } = require("../controllers/clienteController");
 
 router.get("/", listarClientes);
@@ -15,5 +16,6 @@ router.post("/", criarCliente);
 router.put("/:id", atualizarCliente);
 router.put("/:id/ativo", toggleClienteAtivo);
 router.delete("/:id", deletarCliente);
+router.post("/login", loginCliente);
 
 module.exports = router;

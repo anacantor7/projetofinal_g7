@@ -1,4 +1,4 @@
- const Cliente = require("../models/clienteModel");
+const Cliente = require("../models/clienteModel");
 
 // GET /clientes
 async function listarClientes(req, res) {
@@ -45,22 +45,22 @@ async function buscarClientePorId(req, res) {
 
 // POST /clientes
 async function criarCliente(req, res) {
-  const { nome, telefone, observacoes } = req.body;
+  const { nome, telefone, email, senha } = req.body;
 
   try {
-    // التحقق إن كان العميل مسجل مسبقًا بنفس الاسم ورقم الهاتف
+    // Verificar si ya existe un cliente con el mismo email
     const clienteExistente = await Cliente.findOne({
-      where: { nome, telefone },
+      where: { email },
     });
 
     if (clienteExistente) {
       return res.status(400).json({
-        erro: "Já existe um cliente cadastrado com esse nome e telefone.",
+        erro: "Já existe um cliente cadastrado com esse email.",
       });
     }
 
-    // إنشاء العميل إذا لم يكن موجودًا
-    const novoCliente = await Cliente.create({ nome, telefone, observacoes });
+    // Crear el cliente si no existe
+    const novoCliente = await Cliente.create({ nome, telefone, email, senha });
 
     res.status(201).json(novoCliente);
   } catch (error) {
@@ -70,6 +70,26 @@ async function criarCliente(req, res) {
           ? error.message
           : "Erro ao criar cliente",
     });
+  }
+}
+
+// POST /clientes/login
+async function loginCliente(req, res) {
+  const { email, senha } = req.body;
+  try {
+    if (!email || !senha) {
+      return res.status(400).json({ erro: "Email e senha são obrigatórios." });
+    }
+    const cliente = await Cliente.findOne({ where: { email } });
+    if (!cliente || cliente.senha !== senha) {
+      return res.status(401).json({ erro: "Email ou senha inválidos." });
+    }
+    res.status(200).json({
+      mensagem: "Login bem-sucedido",
+      cliente: { id: cliente.id, nome: cliente.nome, email: cliente.email },
+    });
+  } catch (error) {
+    res.status(500).json({ erro: "Erro ao realizar login" });
   }
 }
 
@@ -153,4 +173,5 @@ module.exports = {
   atualizarCliente,
   toggleClienteAtivo,
   deletarCliente,
+  loginCliente,
 };

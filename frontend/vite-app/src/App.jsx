@@ -9,9 +9,27 @@ import PagSeg from './pages/PagSeg';
 import Agendamentos from './pages/Agendamento';
 import Servicos from './pages/Servicos';
 import Feedback from './pages/feedback';
-// ...existing code...
+import Admin from './pages/Admin';
+import { useEffect } from 'react';
+
+function AdminRoute({ children }) {
+  const usuario = JSON.parse(localStorage.getItem('usuarioLogado'));
+  if (usuario && usuario.role === 'admin') {
+    return children;
+  } else {
+    return <h1>Acceso denegado</h1>;
+  }
+}
 
 export default function App() {
+  // Redirigir automáticamente a /admin si el usuario es admin
+  useEffect(() => {
+    const usuario = JSON.parse(localStorage.getItem('usuarioLogado'));
+    if (usuario && usuario.role === 'admin' && window.location.pathname !== '/admin') {
+      window.location.href = '/admin';
+    }
+  }, []);
+
   return (
     <Router>
       <Header />
@@ -23,6 +41,11 @@ export default function App() {
         <Route path="/Agendamento" element={<Agendamentos />} />
         <Route path="/servicos" element={<Servicos />} />
         <Route path="/feedback" element={<Feedback />} />
+        <Route path="/admin" element={
+          <AdminRoute>
+            <Admin />
+          </AdminRoute>
+        } />
         {/* Add more routes as needed */}
         <Route path="*" element={<h1>404 - Página não encontrada</h1>} />
       </Routes>

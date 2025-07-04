@@ -9,6 +9,8 @@ const servicoRoutes = require("./routes/servicoRoutes");
 const clienteRoutes = require("./routes/clienteRoutes");
 const profissionalRoutes = require("./routes/profissionalRoutes");
 const tipoRoutes = require("./routes/tipoRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+const adminAuthRoutes = require("./routes/adminAuthRoutes");
 
 const app = express();
 
@@ -20,6 +22,7 @@ const Servico = require("./models/servicoModel");
 const Tipo = require("./models/tipoModel");
 const Profissional = require("./models/profissionalModel");
 const Agendamento = require("./models/agendamentoModel");
+const Admin = require("./models/adminModel");
 
 //  علاقات Sequelize
 // Cliente 1:N Agendamento
@@ -48,7 +51,9 @@ sequelize
     console.error("Erro ao sincronizar o banco de dados:", err);
   });
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173"
+}));
 app.use(express.json());
 
 app.use("/clientes", clienteRoutes);
@@ -56,6 +61,8 @@ app.use("/servicos", servicoRoutes);
 app.use("/tipos", tipoRoutes);
 app.use("/profissionais", profissionalRoutes);
 app.use("/agendamentos", agendamentoRoutes);
+app.use("/admins", adminRoutes);
+app.use("/admin-auth", adminAuthRoutes);
 
 const PORT = process.env.PORT || 3000;
 console.log("Ambiente:", process.env.NODE_ENV);

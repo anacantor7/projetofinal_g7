@@ -10,9 +10,17 @@ const Cliente = sequelize.define("Cliente", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  observacoes: {
-    type: DataTypes.TEXT,
-    allowNull: true,
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+    validate: {
+      isEmail: true,
+    },
+  },
+  senha: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   ativo: {
     type: DataTypes.BOOLEAN,
