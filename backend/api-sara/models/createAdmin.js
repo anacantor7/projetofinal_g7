@@ -1,28 +1,26 @@
-const Cliente = require('./clienteModel');
+const Admin = require('./adminModel');
 const sequelize = require('../database/db');
 
 async function createAdmin() {
   try {
     await sequelize.sync();
-    const [admin, created] = await Cliente.findOrCreate({
+    const [admin, created] = await Admin.findOrCreate({
       where: { email: 'admin@salao.com' },
       defaults: {
         nome: 'Administrador',
-        telefone: '000000000',
         email: 'admin@salao.com',
-        senha: 'admin123', // Cambia esta contraseña después de crear el admin
+        senha: 'admin123', // Cambia esta senha después de crear el admin
         ativo: true,
-        role: 'admin',
       },
     });
     if (created) {
-      console.log('Usuario admin creado con éxito.');
+      console.log('Usuario admin criado com sucesso na tabela Admin.');
     } else {
-      console.log('El usuario admin ya existe.');
+      console.log('O usuário admin já existe na tabela Admin.');
     }
     process.exit();
   } catch (error) {
-    console.error('Error al crear usuario admin:', error);
+    console.error('Erro ao criar usuário admin:', error);
     process.exit(1);
   }
 }

@@ -64,6 +64,24 @@ app.use("/agendamentos", agendamentoRoutes);
 app.use("/admins", adminRoutes);
 app.use("/admin-auth", adminAuthRoutes);
 
+// Crear admin automáticamente si no existe
+async function ensureAdmin() {
+  try {
+    await Admin.findOrCreate({
+      where: { email: 'admin@salao.com' },
+      defaults: {
+        nome: 'Administrador',
+        email: 'admin@salao.com',
+        senha: 'admin123', // Cambia esta senha después de crear el admin
+        ativo: true,
+      },
+    });
+  } catch (error) {
+    console.error('Erro ao garantir admin:', error);
+  }
+}
+ensureAdmin();
+
 const PORT = process.env.PORT || 3000;
 console.log("Ambiente:", process.env.NODE_ENV);
 app.listen(PORT, () => {

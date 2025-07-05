@@ -4,6 +4,7 @@ import '../App.css'; // Unificar estilos en App.css
 
 export default function PagSeg() {
   const [name, setName] = useState('');
+  const [agendamentos, setAgendamentos] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -12,6 +13,11 @@ export default function PagSeg() {
     if (usuario) {
       const userData = JSON.parse(usuario);
       setName(userData.nome);
+      // Buscar agendamentos do usuário
+      fetch(`http://localhost:3000/agendamentos?clienteId=${userData.id}`)
+        .then(res => res.json())
+        .then(data => setAgendamentos(data))
+        .catch(() => setAgendamentos([]));
     } else {
       // Si no hay usuario logueado, redirigir al login
       navigate('/');
@@ -38,6 +44,17 @@ export default function PagSeg() {
     }
   };
 
+  const handleEditar = (id) => {
+    navigate(`/agendamento?id=${id}`);
+  };
+
+  const handleExcluir = async (id) => {
+    if (window.confirm('Deseja realmente excluir este agendamento?')) {
+      await fetch(`http://localhost:3000/agendamentos/${id}`, { method: 'DELETE' });
+      setAgendamentos(agendamentos.filter(a => a.id !== id));
+    }
+  };
+
   return (
     <div className="PagSeg-body">
       <div className="PagSeg-header" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '6px' }}>
@@ -51,6 +68,36 @@ export default function PagSeg() {
         <button className="PagSeg-btn" onClick={() => registrarEIr('Agendar', '/agendamento')} style={{ width: '220px' }}>Agendar</button>
         <button className="PagSeg-btn" onClick={() => registrarEIr('Serviços', '/servicos')} style={{ width: '220px' }}>Serviços</button>
         <button className="PagSeg-btn" onClick={() => registrarEIr('Feedback', '/feedback')} style={{ width: '220px' }}>Feedback</button>
+      </div>
+      <div style={{ marginTop: '40px', width: '100%', maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto' }}>
+        <h2 style={{ color: '#C8377C', marginBottom: '12px' }}>Meus Agendamentos</h2>
+        {agendamentos.length === 0 ? (
+          <p style={{ color: '#888' }}>Nenhum agendamento encontrado.</p>
+        ) : (
+          <table style={{ width: '100%', background: '#fff', borderRadius: '8px', boxShadow: '0 2px 8px #0001', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ background: '#ffd1dc', color: '#C8377C' }}>
+                <th style={{ padding: '8px', borderBottom: '1px solid #eee' }}>Serviço</th>
+                <th style={{ padding: '8px', borderBottom: '1px solid #eee' }}>Data</th>
+                <th style={{ padding: '8px', borderBottom: '1px solid #eee' }}>Hora</th>
+                <th style={{ padding: '8px', borderBottom: '1px solid #eee' }}>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {agendamentos.map(a => (
+                <tr key={a.id}>
+                  <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{a.Servico?.nome || '-'}</td>
+                  <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{a.data}</td>
+                  <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{a.hora}</td>
+                  <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
+                    <button onClick={() => handleEditar(a.id)} style={{ marginRight: '8px', background: '#ffd1dc', color: '#C8377C', border: '1px solid #C8377C', borderRadius: '4px', padding: '4px 10px', cursor: 'pointer' }}>Editar</button>
+                    <button onClick={() => handleExcluir(a.id)} style={{ background: '#eee', color: '#C8377C', border: '1px solid #C8377C', borderRadius: '4px', padding: '4px 10px', cursor: 'pointer' }}>Excluir</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
