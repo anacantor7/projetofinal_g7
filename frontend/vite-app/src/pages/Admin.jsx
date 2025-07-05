@@ -3,11 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Admin = () => {
   const [usuarios, setUsuarios] = useState([]);
-  const [servicos, setServicos] = useState([
-    { id: 1, nome: 'Corte de Cabelo' },
-    { id: 2, nome: 'Manicure' },
-    { id: 3, nome: 'Coloração' }
-  ]);
+  const [servicos, setServicos] = useState([]);
   const [novoEmpregado, setNovoEmpregado] = useState({ nome: '', telefone: '', especialidade: '', ativo: true });
   const [novoHorario, setNovoHorario] = useState({ profissionalId: '', servicoId: '', hora: '', horaFinal: '' });
   const [profissionais, setProfissionais] = useState([]);
@@ -17,6 +13,11 @@ const Admin = () => {
   const [horariosRegistrados, setHorariosRegistrados] = useState([]);
   const [tipos, setTipos] = useState([]);
   const [nuevoServico, setNuevoServico] = useState({ nome: '', duracao: '', preco: '', tipoId: '', ativo: true });
+  const [editandoServico, setEditandoServico] = useState(null);
+  const [editandoEmpregado, setEditandoEmpregado] = useState(null);
+  const [editandoUsuario, setEditandoUsuario] = useState(null);
+  const [novoUsuario, setNovoUsuario] = useState({ nombre: '', email: '' });
+  const [feedback, setFeedback] = useState({ message: '', type: '' });
   const navigate = useNavigate();
 
   // Días de la semana para selección múltiple
@@ -42,7 +43,32 @@ const Admin = () => {
       // Si el backend no responde, se mantienen las opciones por defecto
       fetch('http://localhost:3000/servicos')
         .then(res => res.json())
-        .then(data => { if (Array.isArray(data) && data.length > 0) setServicos(data); });
+        .then(async data => {
+          if (Array.isArray(data) && data.length > 0) {
+            setServicos(data);
+          } else {
+            // Si no hay servicios, registrar algunos por defecto
+            const tiposRes = await fetch('http://localhost:3000/tipos');
+            const tipos = await tiposRes.json();
+            const tipoId = tipos[0]?.id || 1;
+            const defaultServicos = [
+              { nome: 'Corte de Cabelo', duracao: 30, preco: 50, tipoId, ativo: true },
+              { nome: 'Manicure', duracao: 40, preco: 35, tipoId, ativo: true },
+              { nome: 'Coloração', duracao: 60, preco: 120, tipoId, ativo: true }
+            ];
+            for (const serv of defaultServicos) {
+              await fetch('http://localhost:3000/servicos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(serv)
+              });
+            }
+            // Recargar lista de servicios
+            fetch('http://localhost:3000/servicos')
+              .then(res2 => res2.json())
+              .then(data2 => setServicos(data2));
+          }
+        });
       fetch('http://localhost:3000/profissionais')
         .then(res => res.json())
         .then(data => setProfissionais(data));
@@ -51,22 +77,44 @@ const Admin = () => {
         .then(data => setHorariosRegistrados(data));
       fetch('http://localhost:3000/tipos')
         .then(res => res.json())
-        .then(data => {
+        .then(async data => {
           if (Array.isArray(data) && data.length > 0) {
             setTipos(data);
           } else {
-            // Si no hay tipos en la base, agregar por defecto
-            setTipos([
-              { id: 1, nome: 'Presencial' },
-              { id: 2, nome: 'Domicilio' }
-            ]);
+            // Si no hay tipos en la base, crearlos en el backend
+            const tiposDefault = [
+              { nome: 'Presencial' },
+              { nome: 'Domicilio' }
+            ];
+            for (const tipo of tiposDefault) {
+              await fetch('http://localhost:3000/tipos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(tipo)
+              });
+            }
+            // Recargar tipos desde el backend
+            fetch('http://localhost:3000/tipos')
+              .then(res => res.json())
+              .then(data2 => setTipos(data2));
           }
         })
-        .catch(() => {
-          setTipos([
-            { id: 1, nome: 'Presencial' },
-            { id: 2, nome: 'Domicilio' }
-          ]);
+        .catch(async () => {
+          // Si el backend no responde, intentar crearlos
+          const tiposDefault = [
+            { nome: 'Presencial' },
+            { nome: 'Domicilio' }
+          ];
+          for (const tipo of tiposDefault) {
+            await fetch('http://localhost:3000/tipos', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(tipo)
+            });
+          }
+          fetch('http://localhost:3000/tipos')
+            .then(res => res.json())
+            .then(data2 => setTipos(data2));
         });
     }
   }, [navigate]);
@@ -97,11 +145,39 @@ const Admin = () => {
     setNovoHorario({ profissionalId: '', servicoId: '', hora: '', horaFinal: '' });
   };
 
+  // Funciones para recargar datos
+  const reloadUsuarios = () => {
+    fetch('http://localhost:3000/usuarios')
+      .then(res => res.json())
+      .then(data => setUsuarios(data));
+  };
+  const reloadServicos = () => {
+    fetch('http://localhost:3000/servicos')
+      .then(res => res.json())
+      .then(data => { if (Array.isArray(data) && data.length > 0) setServicos(data); });
+  };
+  const reloadProfissionais = () => {
+    fetch('http://localhost:3000/profissionais')
+      .then(res => res.json())
+      .then(data => setProfissionais(data));
+  };
+  const reloadHorarios = () => {
+    fetch('http://localhost:3000/horarios')
+      .then(res => res.json())
+      .then(data => setHorariosRegistrados(data));
+  };
+
   // Eliminar empleado
   const handleDeleteEmpregado = async (id) => {
     if (window.confirm('¿Desea eliminar este empleado?')) {
-      await fetch(`http://localhost:3000/profissionais/${id}`, { method: 'DELETE' });
-      setProfissionais(profissionais.filter(p => p.id !== id));
+      try {
+        const res = await fetch(`http://localhost:3000/profissionais/${id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Error al eliminar empleado');
+        setFeedback({ message: 'Empleado eliminado correctamente', type: 'success' });
+        reloadProfissionais();
+      } catch (err) {
+        setFeedback({ message: 'Error al eliminar empleado', type: 'error' });
+      }
     }
   };
 
@@ -138,24 +214,44 @@ const Admin = () => {
 
   // Enviar todos los horarios seleccionados al backend
   const handleGuardarHorarios = async () => {
-    for (const horario of horarios) {
-      await fetch('http://localhost:3000/horarios', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(horario)
-      });
+    try {
+      for (const horario of horarios) {
+        await fetch('http://localhost:3000/horarios', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(horario)
+        });
+      }
+      setHorarios([]);
+      setFeedback({ message: 'Horarios guardados correctamente', type: 'success' });
+      reloadHorarios();
+    } catch (err) {
+      setFeedback({ message: 'Error al guardar horarios', type: 'error' });
     }
-    setHorarios([]);
-    // Recargar lista de horarios
-    fetch('http://localhost:3000/horarios')
-      .then(res => res.json())
-      .then(data => setHorariosRegistrados(data));
+  };
+
+  // Eliminar servicio
+  const handleDeleteServico = async (id) => {
+    try {
+      const res = await fetch(`http://localhost:3000/servicos/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Error al eliminar servicio');
+      setFeedback({ message: 'Servicio eliminado correctamente', type: 'success' });
+      reloadServicos();
+    } catch (err) {
+      setFeedback({ message: 'Error al eliminar servicio', type: 'error' });
+    }
   };
 
   // Eliminar horario del backend
   const handleDeleteHorario = async (id) => {
-    await fetch(`http://localhost:3000/horarios/${id}`, { method: 'DELETE' });
-    setHorariosRegistrados(horariosRegistrados.filter(h => h.id !== id));
+    try {
+      const res = await fetch(`http://localhost:3000/horarios/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Error al eliminar horario');
+      setFeedback({ message: 'Horario eliminado correctamente', type: 'success' });
+      reloadHorarios();
+    } catch (err) {
+      setFeedback({ message: 'Error al eliminar horario', type: 'error' });
+    }
   };
 
   // Editar horario (carga en el formulario)
@@ -180,27 +276,154 @@ const Admin = () => {
       .then(data => { if (Array.isArray(data) && data.length > 0) setServicos(data); });
   };
 
-  // Eliminar servicio
-  const handleDeleteServico = async (id) => {
-    await fetch(`http://localhost:3000/servicos/${id}`, { method: 'DELETE' });
-    setServicos(servicos.filter(s => s.id !== id));
+  // Editar servicio: cargar datos en el formulario
+  const handleEditServico = (servico) => {
+    setEditandoServico(servico.id);
+    setNuevoServico({
+      nome: servico.nome,
+      duracao: servico.duracao,
+      preco: servico.preco,
+      tipoId: servico.tipoId,
+      ativo: servico.ativo
+    });
   };
 
-  // Cambiar estado de servicio (activar/desactivar)
-  const handleToggleServicoAtivo = async (id, ativo) => {
-    await fetch(`http://localhost:3000/servicos/${id}/ativo`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ativo: !ativo })
+  // Guardar edición de servicio
+  const handleUpdateServico = async (e) => {
+    e.preventDefault();
+    if (!editandoServico) {
+      setFeedback({ message: 'ID de servicio inválido. No se puede actualizar.', type: 'error' });
+      return;
+    }
+    // Validación frontend
+    if (!nuevoServico.nome || !nuevoServico.duracao || !nuevoServico.preco || !nuevoServico.tipoId) {
+      setFeedback({ message: 'Todos los campos son obligatorios', type: 'error' });
+      return;
+    }
+    const servicoEdit = {
+      ...nuevoServico,
+      duracao: Number(nuevoServico.duracao),
+      preco: Number(nuevoServico.preco),
+      tipoId: Number(nuevoServico.tipoId),
+      ativo: Boolean(nuevoServico.ativo)
+    };
+    try {
+      const res = await fetch(`http://localhost:3000/servicos/${editandoServico}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(servicoEdit)
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        setFeedback({ message: (errorData.erro ? errorData.erro + ` (ID: ${editandoServico})` : 'Error al actualizar servicio'), type: 'error' });
+        return;
+      }
+      setFeedback({ message: 'Servicio actualizado correctamente', type: 'success' });
+      setEditandoServico(null);
+      setNuevoServico({ nome: '', duracao: '', preco: '', tipoId: '', ativo: true });
+      reloadServicos();
+    } catch (err) {
+      setFeedback({ message: 'Error de red al actualizar servicio', type: 'error' });
+    }
+  };
+
+  // Cancelar edición
+  const handleCancelEditServico = () => {
+    setEditandoServico(null);
+    setNuevoServico({ nome: '', duracao: '', preco: '', tipoId: '', ativo: true });
+  };
+
+  // Editar empleado: cargar datos en el formulario
+  const handleEditEmpregado = (emp) => {
+    setEditandoEmpregado(emp.id);
+    setNovoEmpregado({
+      nome: emp.nome,
+      telefone: emp.telefone,
+      especialidade: emp.especialidade,
+      ativo: emp.ativo
     });
-    fetch('http://localhost:3000/servicos')
-      .then(res => res.json())
-      .then(data => { if (Array.isArray(data) && data.length > 0) setServicos(data); });
+  };
+
+  // Guardar edición de empleado
+  const handleUpdateEmpregado = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`http://localhost:3000/profissionais/${editandoEmpregado}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(novoEmpregado)
+      });
+      if (!res.ok) throw new Error('Error al guardar empleado');
+      setFeedback({ message: 'Empleado actualizado correctamente', type: 'success' });
+      setEditandoEmpregado(null);
+      setNovoEmpregado({ nome: '', telefone: '', especialidade: '', ativo: true });
+      reloadProfissionais();
+    } catch (err) {
+      setFeedback({ message: 'Error al actualizar empleado', type: 'error' });
+    }
+  };
+
+  // Cancelar edición empleado
+  const handleCancelEditEmpregado = () => {
+    setEditandoEmpregado(null);
+    setNovoEmpregado({ nome: '', telefone: '', especialidade: '', ativo: true });
+  };
+
+  // Editar usuario: cargar datos en el formulario
+  const handleEditUsuario = (usuario) => {
+    setEditandoUsuario(usuario.id);
+    setNovoUsuario({ nombre: usuario.nombre, email: usuario.email });
+  };
+
+  // Guardar edición de usuario
+  const handleUpdateUsuario = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`http://localhost:3000/usuarios/${editandoUsuario}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(novoUsuario)
+      });
+      if (!res.ok) throw new Error('Error al guardar usuario');
+      setFeedback({ message: 'Usuario actualizado correctamente', type: 'success' });
+      setEditandoUsuario(null);
+      setNovoUsuario({ nombre: '', email: '' });
+      reloadUsuarios();
+    } catch (err) {
+      setFeedback({ message: 'Error al actualizar usuario', type: 'error' });
+    }
+  };
+
+  // Cancelar edición usuario
+  const handleCancelEditUsuario = () => {
+    setEditandoUsuario(null);
+    setNovoUsuario({ nombre: '', email: '' });
   };
 
   return (
     <div className="admin-container">
+      <button
+        onClick={() => {
+          localStorage.removeItem('usuarioLogado');
+          navigate('/');
+        }}
+        style={{
+          position: 'absolute', right: 24, top: 24, padding: '8px 16px', background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', zIndex: 10
+        }}
+      >
+        Cerrar sesión
+      </button>
       <h1>Panel de Administración</h1>
+      {feedback.message && (
+        <div style={{
+          background: feedback.type === 'success' ? '#d4edda' : '#f8d7da',
+          color: feedback.type === 'success' ? '#155724' : '#721c24',
+          padding: '8px',
+          marginBottom: '16px',
+          borderRadius: '4px',
+          border: feedback.type === 'success' ? '1px solid #c3e6cb' : '1px solid #f5c6cb'
+        }}>{feedback.message}</div>
+      )}
       <h2>Usuarios</h2>
       <table className="admin-table">
         <thead>
@@ -208,6 +431,7 @@ const Admin = () => {
             <th>ID</th>
             <th>Nombre</th>
             <th>Email</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -216,10 +440,33 @@ const Admin = () => {
               <td>{usuario.id}</td>
               <td>{usuario.nombre}</td>
               <td>{usuario.email}</td>
+              <td>
+                <button onClick={() => handleEditUsuario(usuario)}>Editar</button>
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
+      {editandoUsuario && (
+        <form onSubmit={handleUpdateUsuario} className="admin-form">
+          <input
+            type="text"
+            placeholder="Nombre"
+            value={novoUsuario.nombre}
+            onChange={e => setNovoUsuario({ ...novoUsuario, nombre: e.target.value })}
+            required
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={novoUsuario.email}
+            onChange={e => setNovoUsuario({ ...novoUsuario, email: e.target.value })}
+            required
+          />
+          <button type="submit">Guardar Cambios</button>
+          <button type="button" onClick={handleCancelEditUsuario} style={{ marginLeft: 8 }}>Cancelar</button>
+        </form>
+      )}
 
       <h2>Empleados</h2>
       <table className="admin-table">
@@ -242,46 +489,48 @@ const Admin = () => {
               <td>{emp.especialidade}</td>
               <td>{emp.ativo ? 'Sí' : 'No'}</td>
               <td>
-                <button onClick={() => handleDeleteEmpregado(emp.id)} style={{ background: '#ffd1dc', color: '#C8377C', border: '1px solid #C8377C', borderRadius: '4px', padding: '4px 10px', cursor: 'pointer' }}>Eliminar</button>
+                <button onClick={() => handleEditEmpregado(emp)}>Editar</button>
+                <button onClick={() => handleDeleteEmpregado(emp.id)} style={{ marginLeft: 8 }}>Eliminar</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
-      <h2>Registrar Empleado</h2>
-      <form onSubmit={handleAddEmpregado} className="admin-form">
-        <input
-          type="text"
-          placeholder="Nombre"
-          value={novoEmpregado.nome}
-          onChange={e => setNovoEmpregado({ ...novoEmpregado, nome: e.target.value })}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Teléfono"
-          value={novoEmpregado.telefone}
-          onChange={e => setNovoEmpregado({ ...novoEmpregado, telefone: e.target.value })}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Especialidad"
-          value={novoEmpregado.especialidade}
-          onChange={e => setNovoEmpregado({ ...novoEmpregado, especialidade: e.target.value })}
-          required
-        />
-        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '8px 0' }}>
+      {editandoEmpregado && (
+        <form onSubmit={handleUpdateEmpregado} className="admin-form">
           <input
-            type="checkbox"
-            checked={novoEmpregado.ativo}
-            onChange={e => setNovoEmpregado({ ...novoEmpregado, ativo: e.target.checked })}
+            type="text"
+            placeholder="Nombre"
+            value={novoEmpregado.nome}
+            onChange={e => setNovoEmpregado({ ...novoEmpregado, nome: e.target.value })}
+            required
           />
-          Activo
-        </label>
-        <button type="submit">Registrar Empleado</button>
-      </form>
+          <input
+            type="text"
+            placeholder="Teléfono"
+            value={novoEmpregado.telefone}
+            onChange={e => setNovoEmpregado({ ...novoEmpregado, telefone: e.target.value })}
+            required
+          />
+          <input
+            type="text"
+            placeholder="Especialidad"
+            value={novoEmpregado.especialidade}
+            onChange={e => setNovoEmpregado({ ...novoEmpregado, especialidade: e.target.value })}
+            required
+          />
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '8px 0' }}>
+            <input
+              type="checkbox"
+              checked={novoEmpregado.ativo}
+              onChange={e => setNovoEmpregado({ ...novoEmpregado, ativo: e.target.checked })}
+            />
+            Activo
+          </label>
+          <button type="submit">Guardar Cambios</button>
+          <button type="button" onClick={handleCancelEditEmpregado} style={{ marginLeft: 8 }}>Cancelar</button>
+        </form>
+      )}
 
       <h2>Agregar Tipo de Servicio</h2>
       <form onSubmit={handleAddTipoServico} className="admin-form" style={{ marginBottom: '24px' }}>
@@ -411,6 +660,7 @@ const Admin = () => {
               <td>{tipos.find(t => t.id === servico.tipoId)?.nome || '-'}</td>
               <td>{servico.ativo ? 'Sí' : 'No'}</td>
               <td>
+                <button onClick={() => handleEditServico(servico)}>Editar</button>
                 <button onClick={() => handleToggleServicoAtivo(servico.id, servico.ativo)}>{servico.ativo ? 'Desactivar' : 'Activar'}</button>
                 <button onClick={() => handleDeleteServico(servico.id)} style={{ marginLeft: 8 }}>Eliminar</button>
               </td>
@@ -419,8 +669,8 @@ const Admin = () => {
         </tbody>
       </table>
 
-      <h2>Registrar Servicio</h2>
-      <form onSubmit={handleAddServico} className="admin-form">
+      <h2>{editandoServico ? 'Editar Servicio' : 'Registrar Servicio'}</h2>
+      <form onSubmit={editandoServico ? handleUpdateServico : handleAddServico} className="admin-form">
         <input
           type="text"
           placeholder="Nombre"
@@ -460,7 +710,8 @@ const Admin = () => {
           />
           Activo
         </label>
-        <button type="submit">Registrar Servicio</button>
+        <button type="submit">{editandoServico ? 'Guardar Cambios' : 'Registrar Servicio'}</button>
+        {editandoServico && <button type="button" onClick={handleCancelEditServico} style={{ marginLeft: 8 }}>Cancelar</button>}
       </form>
     </div>
   );

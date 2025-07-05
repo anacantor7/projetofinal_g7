@@ -28,6 +28,9 @@ const Cadastro = () => {
             if (response.ok) {
                 setMensagem("Cliente cadastrado com sucesso!");
                 event.target.reset();
+                setTimeout(() => {
+                    window.location.href = "/";
+                }, 1500); // Espera 1.5 segundos antes de redirigir
             } else {
                 const erro = await response.json();
                 setMensagem(erro.erro || "Erro ao cadastrar cliente");

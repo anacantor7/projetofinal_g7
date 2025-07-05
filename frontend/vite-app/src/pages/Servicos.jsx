@@ -10,7 +10,12 @@ export default function Servicos() {
   const [servicoSelecionado, setServicoSelecionado] = useState(null);
   const [profissionalSelecionado, setProfissionalSelecionado] = useState(null);
   const [horarioSelecionado, setHorarioSelecionado] = useState(null);
+  const [diaSelecionado, setDiaSelecionado] = useState(null);
   const navigate = useNavigate();
+
+  const horarioTrabalho = [
+    "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"
+  ];
 
   useEffect(() => {
     // Obtener usuario logueado
@@ -59,6 +64,39 @@ export default function Servicos() {
               </button>
             ))}
           </div>
+          {/* Seleção de dia */}
+          {servicoSelecionado && (
+            <>
+              <h3>Selecione o dia:</h3>
+              <div className="dias">
+                {[...Array(7)].map((_, i) => {
+                  const data = new Date();
+                  data.setDate(data.getDate() + i);
+                  const label = data.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' });
+                  return (
+                    <button
+                      key={i}
+                      className={diaSelecionado === i ? "btn-roxo" : "btn-rosa"}
+                      onClick={() => setDiaSelecionado(i)}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          )}
+          {/* Mostrar horario de trabalho da loja ao selecionar dia */}
+          {diaSelecionado !== null && (
+            <>
+              <h3>Horário de trabalho da loja:</h3>
+              <div className="horarios">
+                {horarioTrabalho.map(hora => (
+                  <span key={hora} className="btn-rosa" style={{ margin: 4 }}>{hora}</span>
+                ))}
+              </div>
+            </>
+          )}
           {servicoSelecionado && (
             <>
               <h3>Profissionais disponíveis:</h3>
