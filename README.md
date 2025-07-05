@@ -110,7 +110,10 @@ Com ela, é possível cadastrar clientes, serviços, profissionais e agendamento
 
 ---
 
-📘 A documentação completa da API está disponível em [`API.md`](./backend/api-sara/docs/API.md)
+📘 A documentação completa está disponível nos arquivos:
+
+- [`API.md`](./backend/api-sara/docs/API.md)
+- [`Instruções de Integração Front-End ↔ Back-End`](./backend/api-sara/docs/instrucoes-integracao.md)
 
 ---
 
