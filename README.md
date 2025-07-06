@@ -47,11 +47,10 @@ Com ela, é possível cadastrar clientes, serviços, profissionais e agendamento
 
 ## 👩‍💻 Time de desenvolvimento
 
-| Nome          | Responsável por                                 |
-| ------------- | ----------------------------------------------- |
-| **Ana Maria** | Design da interface (Figma) + Front-End (React) |
-| **Sara**      | API (Node.js/Express) + Rotas                   |
-| **Nuvia**     | Banco de dados (SQLite) + Testes                |
+| Nome          | Responsável por                                         |
+| ------------- | ------------------------------------------------------- |
+| **Ana Maria** | Design da interface (Figma) + Front-End (React)         |
+| **Sara**      | API (Node.js/Express) + Banco de dados (SQLite) + Rotas |
 
 ---
 
