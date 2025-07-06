@@ -15,10 +15,7 @@ async function listarAgendamentos(req, res) {
     if (data) where.data = data;
     if (clienteId) where.clienteId = clienteId;
     if (profissionalId) where.profissionalId = profissionalId;
-    if (data && hora) {
-      where.data = data;
-      where.hora = hora;
-    }
+    if (hora) where.hora = hora;
 
     const agendamentos = await Agendamento.findAll({
       where,
@@ -40,11 +37,10 @@ async function listarAgendamentos(req, res) {
 
     res.status(200).json(agendamentos);
   } catch (error) {
+    console.error('Erro ao buscar agendamentos:', error); // Log detalhado no terminal
     res.status(500).json({
-      erro:
-        process.env.NODE_ENV === "development"
-          ? error.message
-          : "Erro ao buscar agendamentos",
+      erro: error.message || String(error), // Sempre retorna a mensagem real do erro
+      stack: error.stack // Inclui stack trace para facilitar debug
     });
   }
 }
@@ -72,7 +68,7 @@ async function buscarAgendamentoPorId(req, res) {
 
 // POST /agendamentos
 async function criarAgendamento(req, res) {
-  const { clienteId, servicoId, profissionalId, data, hora } = req.body;
+  const { clienteId, servicoId, profissionalId, data, hora, categoria } = req.body;
 
   try {
     // التحقق من ساعات العمل
@@ -111,9 +107,48 @@ async function criarAgendamento(req, res) {
       return res.status(400).json({ erro: "Tipo de serviço inválido" });
     }
 
-    if (profissional.especialidade !== tipoServico.nome) {
-      return res.status(400).json({
-        erro: "Profissional não corresponde à especialidade do serviço",
+    // Validate professional's specialty against service type and category
+    const normalizeString = (str) => str.toLowerCase().trim();
+    
+    const profEspecialidade = normalizeString(profissional.especialidade);
+    const tipoServicoNome = normalizeString(tipoServico.nome);
+    const servicoNome = normalizeString(servico.nome);
+    const categoriaNome = categoria ? normalizeString(categoria) : '';
+
+    // Define related specialties (could be moved to a configuration file)
+    const especialidadesRelacionadas = {
+      'cabelo': ['corte', 'coloração', 'penteado', 'tratamento capilar'],
+      'manicure': ['pedicure', 'unhas', 'esmaltação'],
+      'maquiagem': ['design de sobrancelhas', 'maquiagem artística'],
+      // Add more related specialties as needed
+    };
+
+    // Check if the professional's specialty matches or is related to the service
+    const isValidSpecialty = 
+      // Direct matches (case-insensitive)
+      profEspecialidade === tipoServicoNome ||
+      profEspecialidade === servicoNome ||
+      (categoria && profEspecialidade === categoriaNome) ||
+      // Check related specialties
+      Object.entries(especialidadesRelacionadas).some(([mainSpecialty, related]) => {
+        const normalizedMainSpecialty = normalizeString(mainSpecialty);
+        if (profEspecialidade === normalizedMainSpecialty) {
+          return related.some(rel => 
+            normalizeString(rel) === tipoServicoNome || 
+            normalizeString(rel) === servicoNome
+          );
+        }
+        if (related.some(rel => normalizeString(rel) === profEspecialidade)) {
+          return normalizedMainSpecialty === tipoServicoNome || 
+                 normalizedMainSpecialty === servicoNome;
+        }
+        return false;
+      });
+
+    if (!isValidSpecialty) {
+      return res.status(400).json({ 
+        erro: 'Profissional não corresponde à especialidade do serviço',
+        detalhes: `A especialidade do profissional (${profissional.especialidade}) não é compatível com o serviço solicitado (${servico.nome}) do tipo (${tipoServico.nome})${categoria ? ` na categoria (${categoria})` : ''}. Por favor, escolha um profissional com a especialidade adequada.`
       });
     }
 
@@ -135,6 +170,7 @@ async function criarAgendamento(req, res) {
       profissionalId,
       data,
       hora,
+      categoria, // guarda la categoria si viene de manicure
     });
 
     res.status(201).json(novoAgendamento);
@@ -151,7 +187,7 @@ async function criarAgendamento(req, res) {
 // PUT /agendamentos/:id
 async function atualizarAgendamento(req, res) {
   const { id } = req.params;
-  const { clienteId, servicoId, profissionalId, data, hora } = req.body;
+  const { clienteId, servicoId, profissionalId, data, hora, categoria } = req.body;
   try {
     const agendamento = await Agendamento.findByPk(id);
     if (!agendamento) {
@@ -163,6 +199,7 @@ async function atualizarAgendamento(req, res) {
     agendamento.profissionalId = profissionalId;
     agendamento.data = data;
     agendamento.hora = hora;
+    agendamento.categoria = categoria;
     await agendamento.save();
 
     res.status(200).json(agendamento);

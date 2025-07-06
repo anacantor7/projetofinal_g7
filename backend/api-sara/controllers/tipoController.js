@@ -6,11 +6,10 @@ async function listarTipos(req, res) {
     const tipos = await Tipo.findAll();
     res.status(200).json(tipos);
   } catch (error) {
+    console.error('Erro ao listar tipos de serviço:', error);
     res.status(500).json({
-      erro:
-        process.env.NODE_ENV === "development"
-          ? error.message
-          : "Erro ao listar tipos de serviço",
+      erro: error.message || String(error),
+      stack: error.stack
     });
   }
 }

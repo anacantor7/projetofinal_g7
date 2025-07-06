@@ -1,11 +1,44 @@
-import React from "react";
 import logo from '../assets/FUCSIA.png';
+import React from 'react';
+
 
 const Header = () => {
   return (
-    <header style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 0', justifyContent: 'center', background: '#fff' }}>
-      <img src={logo} alt="Logo Bellizy" style={{ height: '38px', width: '38px', objectFit: 'contain' }} />
-      <h1 style={{ color: '#C8377C', fontWeight: 'bold', fontSize: '1.5rem', margin: 0 }}>BELLIZY</h1>
+    <header style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '16px',
+      padding: '18px 0 14px 0',
+      justifyContent: 'center',
+      background: 'linear-gradient(90deg, #fff 60%, #fce4ec 100%)',
+      boxShadow: '0 2px 16px 0 #f8bbd0',
+      borderBottomLeftRadius: '18px',
+      borderBottomRightRadius: '18px',
+      position: 'relative',
+      zIndex: 10
+    }}>
+      <img
+        src={logo}
+        alt="Logo Bellizy"
+        style={{
+          height: '48px',
+          width: '48px',
+          objectFit: 'contain',
+          borderRadius: '50%',
+          border: '2px solid #C8377C',
+          boxShadow: '0 2px 8px #f8bbd0',
+          transition: 'transform 0.3s',
+          cursor: 'pointer'
+        }}
+        onMouseOver={e => (e.currentTarget.style.transform = 'rotate(-10deg) scale(1.08)')}
+        onMouseOut={e => (e.currentTarget.style.transform = 'none')}
+      />
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+        <h1 style={{ color: '#C8377C', fontWeight: 'bold', fontSize: '2rem', margin: 0, letterSpacing: '2px' }}>BELLIZY</h1>
+        <span style={{ color: '#C8377C', fontSize: '0.95rem', fontWeight: 400, marginTop: '-2px', opacity: 0.8 }}>
+          Beleza ao seu alcance
+        </span>
+      </div>
     </header>
   );
 };

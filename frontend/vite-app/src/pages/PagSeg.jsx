@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../App.css'; // Unificar estilos en App.css
+import ErrorBoundary from '../components/ErrorBoundary';
 
-export default function PagSeg() {
+function PagSeg() {
   const [name, setName] = useState('');
   const [agendamentos, setAgendamentos] = useState([]);
+  const [fetchError, setFetchError] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,9 +17,18 @@ export default function PagSeg() {
       setName(userData.nome);
       // Buscar agendamentos do usuário
       fetch(`http://localhost:3000/agendamentos?clienteId=${userData.id}`)
-        .then(res => res.json())
-        .then(data => setAgendamentos(data))
-        .catch(() => setAgendamentos([]));
+        .then(res => {
+          if (!res.ok) throw new Error('Erro ao buscar agendamentos');
+          return res.json();
+        })
+        .then(data => {
+          setAgendamentos(data);
+          setFetchError(false);
+        })
+        .catch(() => {
+          setAgendamentos([]);
+          setFetchError(true);
+        });
     } else {
       // Si no hay usuario logueado, redirigir al login
       navigate('/');
@@ -71,7 +82,9 @@ export default function PagSeg() {
       </div>
       <div style={{ marginTop: '40px', width: '100%', maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto' }}>
         <h2 style={{ color: '#C8377C', marginBottom: '12px' }}>Meus Agendamentos</h2>
-        {agendamentos.length === 0 ? (
+        {fetchError ? (
+          <p style={{ color: 'red' }}>Erro ao buscar agendamentos. Tente novamente mais tarde.</p>
+        ) : agendamentos.length === 0 ? (
           <p style={{ color: '#888' }}>Nenhum agendamento encontrado.</p>
         ) : (
           <table style={{ width: '100%', background: '#fff', borderRadius: '8px', boxShadow: '0 2px 8px #0001', borderCollapse: 'collapse' }}>
@@ -102,3 +115,15 @@ export default function PagSeg() {
     </div>
   );
 }
+
+// Export a version of PagSeg wrapped in ErrorBoundary
+export function PagSegWithBoundary(props) {
+  return (
+    <ErrorBoundary>
+      <PagSeg {...props} />
+    </ErrorBoundary>
+  );
+}
+
+export default PagSeg;
+

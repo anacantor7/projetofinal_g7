@@ -23,6 +23,10 @@ const Agendamento = sequelize.define("Agendamento", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  categoria: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
 
 module.exports = Agendamento;

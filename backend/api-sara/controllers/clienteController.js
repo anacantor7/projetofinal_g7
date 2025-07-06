@@ -15,11 +15,10 @@ async function listarClientes(req, res) {
     const clientes = await Cliente.findAll({ where });
     res.status(200).json(clientes);
   } catch (error) {
+    console.error('Erro ao buscar clientes:', error);
     res.status(500).json({
-      erro:
-        process.env.NODE_ENV === "development"
-          ? error.message
-          : "Erro ao buscar clientes",
+      erro: error.message || String(error),
+      stack: error.stack
     });
   }
 }

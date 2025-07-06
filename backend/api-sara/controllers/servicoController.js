@@ -23,11 +23,10 @@ async function listarServicos(req, res) {
 
     res.status(200).json(servicos);
   } catch (error) {
+    console.error('Erro ao listar serviços:', error);
     res.status(500).json({
-      erro:
-        process.env.NODE_ENV === "development"
-          ? error.message
-          : "Erro ao listar serviços",
+      erro: error.message || String(error),
+      stack: error.stack
     });
   }
 }

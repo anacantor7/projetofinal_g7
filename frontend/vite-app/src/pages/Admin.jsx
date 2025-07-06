@@ -47,15 +47,18 @@ const Admin = () => {
           if (Array.isArray(data) && data.length > 0) {
             setServicos(data);
           } else {
-            // Si no hay servicios, registrar algunos por defecto
-            const tiposRes = await fetch('http://localhost:3000/tipos');
-            const tipos = await tiposRes.json();
-            const tipoId = tipos[0]?.id || 1;
-            const defaultServicos = [
-              { nome: 'Corte de Cabelo', duracao: 30, preco: 50, tipoId, ativo: true },
-              { nome: 'Manicure', duracao: 40, preco: 35, tipoId, ativo: true },
-              { nome: 'Coloração', duracao: 60, preco: 120, tipoId, ativo: true }
-            ];
+            // Si no hay servicios, registrar algunos por defecto según especialidades de empleados
+            const profissionaisRes = await fetch('http://localhost:3000/profissionais');
+            const profissionais = await profissionaisRes.json();
+            const especialidadesUnicas = [...new Set(profissionais.map(p => p.especialidade))];
+            const tipoId = 1; // Asignar un tipoId por defecto
+            const defaultServicos = especialidadesUnicas.map((esp, idx) => ({
+              nome: esp,
+              duracao: 30 + idx * 10, // ejemplo: duración variable
+              preco: 50 + idx * 20,   // ejemplo: precio variable
+              tipoId,
+              ativo: true
+            }));
             for (const serv of defaultServicos) {
               await fetch('http://localhost:3000/servicos', {
                 method: 'POST',

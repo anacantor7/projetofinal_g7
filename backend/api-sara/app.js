@@ -23,6 +23,7 @@ const Tipo = require("./models/tipoModel");
 const Profissional = require("./models/profissionalModel");
 const Agendamento = require("./models/agendamentoModel");
 const Admin = require("./models/adminModel");
+const Subcategoria = require("./models/subcategoriaModel");
 
 //  علاقات Sequelize
 // Cliente 1:N Agendamento
@@ -40,6 +41,10 @@ Agendamento.belongsTo(Profissional, { foreignKey: "profissionalId" });
 // Tipo (One-to-Many)Servico || "Tipo 1 : N Servicos"
 Tipo.hasMany(Servico, { foreignKey: "tipoId" });
 Servico.belongsTo(Tipo, { foreignKey: "tipoId" });
+
+// Tipo 1:N Subcategoria
+Tipo.hasMany(Subcategoria, { foreignKey: "tipoId" });
+Subcategoria.belongsTo(Tipo, { foreignKey: "tipoId" });
 
 // مزامنة قاعدة البيانات Sequelize مع SQLite
 sequelize
