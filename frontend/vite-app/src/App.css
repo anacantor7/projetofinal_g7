@@ -72,14 +72,25 @@ h1 {
 }
 
 input[type="text"],
-input[type="password"] {
-  width: 280px;
-  padding: 10px;
-  margin: 8px 0;
+input[type="password"],
+input[type="number"],
+input[type="email"],
+input[type="time"],
+select {
+  background-color: #6a0dad;
+  color: #fff;
   border: 2px solid #d63384;
   border-radius: 4px;
-  background-color: white;
-  color: #d63384;
+  padding: 10px;
+  margin: 8px 0;
+}
+input[type="text"]::placeholder,
+input[type="password"]::placeholder,
+input[type="number"]::placeholder,
+input[type="email"]::placeholder,
+input[type="time"]::placeholder {
+  color: #e0c6f7;
+  opacity: 1;
 }
 
 button {
@@ -315,4 +326,78 @@ input[type="password"]:focus {
   color: #d32f2f;
   text-align: center;
   margin-bottom: 1rem;
+}
+
+/* Botões padrão */
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  margin: 2px;
+}
+.btn-primary {
+  background: #C8377C;
+  color: #fff;
+}
+.btn-primary:hover {
+  background: #a02c63;
+}
+.btn-success {
+  background: #C8377C; /* roxo */
+  color: #fff;
+}
+.btn-success:hover {
+  background: #a02c63; /* roxo escuro */
+}
+.btn-danger {
+  background: #a02c63; /* roxo escuro */
+  color: #fff;
+}
+.btn-danger:hover {
+  background: #6d2047; /* roxo ainda mais escuro */
+}
+.btn-secondary {
+  background: #6a0dad; /* roxo escuro */
+  color: #fff;
+}
+.btn-secondary:hover {
+  background: #6d2047; /* roxo ainda mais escuro */
+}
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 0.95em;
+}
+
+/* Alertas */
+.alert {
+  padding: 8px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+.alert-success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+.alert-danger {
+  background: #f8d7da;
+  color: #6a0dad;
+  border: 1px solid #f5c6cb;
+}
+
+.logout-btn {
+  position: absolute;
+  right: 24px;
+  top: 24px;
+  z-index: 10;
+}
+
+/* Fundo personalizado para itens de drop-down */
+select, option, .dropdown-item {
+  background-color: #6a0dad !important;
+  color: #fff !important;
 }

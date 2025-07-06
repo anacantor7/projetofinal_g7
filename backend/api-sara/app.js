@@ -11,6 +11,7 @@ const profissionalRoutes = require("./routes/profissionalRoutes");
 const tipoRoutes = require("./routes/tipoRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const adminAuthRoutes = require("./routes/adminAuthRoutes");
+const horarioRoutes = require("./routes/horarioRoutes");
 
 const app = express();
 
@@ -68,6 +69,7 @@ app.use("/profissionais", profissionalRoutes);
 app.use("/agendamentos", agendamentoRoutes);
 app.use("/admins", adminRoutes);
 app.use("/admin-auth", adminAuthRoutes);
+app.use("/horarios", horarioRoutes);
 
 // Crear admin automáticamente si no existe
 async function ensureAdmin() {

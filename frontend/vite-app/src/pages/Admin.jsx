@@ -36,7 +36,7 @@ const Admin = () => {
     if (!usuario) {
       navigate('/');
     } else {
-      fetch('http://localhost:3000/usuarios')
+      fetch('http://localhost:3000/clientes') // Corrigido de /usuarios para /clientes
         .then(res => res.json())
         .then(data => setUsuarios(data))
         .catch(err => console.error('Error al cargar usuarios:', err));
@@ -150,7 +150,7 @@ const Admin = () => {
 
   // Funciones para recargar datos
   const reloadUsuarios = () => {
-    fetch('http://localhost:3000/usuarios')
+    fetch('http://localhost:3000/clientes') // Corrigido de /usuarios para /clientes
       .then(res => res.json())
       .then(data => setUsuarios(data));
   };
@@ -382,7 +382,7 @@ const Admin = () => {
   const handleUpdateUsuario = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`http://localhost:3000/usuarios/${editandoUsuario}`, {
+      const res = await fetch(`http://localhost:3000/clientes/${editandoUsuario}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(novoUsuario)
@@ -410,31 +410,22 @@ const Admin = () => {
           localStorage.removeItem('usuarioLogado');
           navigate('/');
         }}
-        style={{
-          position: 'absolute', right: 24, top: 24, padding: '8px 16px', background: '#e74c3c', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 'bold', zIndex: 10
-        }}
+        className="btn btn-danger logout-btn"
       >
         Cerrar sesión
       </button>
-      <h1>Panel de Administración</h1>
+      <h1>Panel de Administração</h1>
       {feedback.message && (
-        <div style={{
-          background: feedback.type === 'success' ? '#d4edda' : '#f8d7da',
-          color: feedback.type === 'success' ? '#155724' : '#721c24',
-          padding: '8px',
-          marginBottom: '16px',
-          borderRadius: '4px',
-          border: feedback.type === 'success' ? '1px solid #c3e6cb' : '1px solid #f5c6cb'
-        }}>{feedback.message}</div>
+        <div className={`alert ${feedback.type === 'success' ? 'alert-success' : 'alert-danger'}`}>{feedback.message}</div>
       )}
-      <h2>Usuarios</h2>
+      <h2>Usuários</h2>
       <table className="admin-table">
         <thead>
           <tr>
             <th>ID</th>
-            <th>Nombre</th>
+            <th>Nome</th>
             <th>Email</th>
-            <th>Acciones</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -454,7 +445,7 @@ const Admin = () => {
         <form onSubmit={handleUpdateUsuario} className="admin-form">
           <input
             type="text"
-            placeholder="Nombre"
+            placeholder="Nome"
             value={novoUsuario.nombre}
             onChange={e => setNovoUsuario({ ...novoUsuario, nombre: e.target.value })}
             required
@@ -466,21 +457,21 @@ const Admin = () => {
             onChange={e => setNovoUsuario({ ...novoUsuario, email: e.target.value })}
             required
           />
-          <button type="submit">Guardar Cambios</button>
-          <button type="button" onClick={handleCancelEditUsuario} style={{ marginLeft: 8 }}>Cancelar</button>
+          <button type="submit" className="btn btn-primary">Salvar Alterações</button>
+          <button type="button" onClick={handleCancelEditUsuario} className="btn btn-secondary" style={{ marginLeft: 8 }}>Cancelar</button>
         </form>
       )}
 
-      <h2>Empleados</h2>
+      <h2>Funcionários</h2>
       <table className="admin-table">
         <thead>
           <tr>
             <th>ID</th>
-            <th>Nombre</th>
-            <th>Teléfono</th>
-            <th>Especialidad</th>
-            <th>Activo</th>
-            <th>Acciones</th>
+            <th>Nome</th>
+            <th>Telefone</th>
+            <th>Especialidade</th>
+            <th>Ativo</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -490,10 +481,10 @@ const Admin = () => {
               <td>{emp.nome}</td>
               <td>{emp.telefone}</td>
               <td>{emp.especialidade}</td>
-              <td>{emp.ativo ? 'Sí' : 'No'}</td>
+              <td>{emp.ativo ? 'Sim' : 'Não'}</td>
               <td>
                 <button onClick={() => handleEditEmpregado(emp)}>Editar</button>
-                <button onClick={() => handleDeleteEmpregado(emp.id)} style={{ marginLeft: 8 }}>Eliminar</button>
+                <button onClick={() => handleDeleteEmpregado(emp.id)} style={{ marginLeft: 8 }}>Excluir</button>
               </td>
             </tr>
           ))}
@@ -503,21 +494,21 @@ const Admin = () => {
         <form onSubmit={handleUpdateEmpregado} className="admin-form">
           <input
             type="text"
-            placeholder="Nombre"
+            placeholder="Nome"
             value={novoEmpregado.nome}
             onChange={e => setNovoEmpregado({ ...novoEmpregado, nome: e.target.value })}
             required
           />
           <input
             type="text"
-            placeholder="Teléfono"
+            placeholder="Telefone"
             value={novoEmpregado.telefone}
             onChange={e => setNovoEmpregado({ ...novoEmpregado, telefone: e.target.value })}
             required
           />
           <input
             type="text"
-            placeholder="Especialidad"
+            placeholder="Especialidade"
             value={novoEmpregado.especialidade}
             onChange={e => setNovoEmpregado({ ...novoEmpregado, especialidade: e.target.value })}
             required
@@ -528,33 +519,33 @@ const Admin = () => {
               checked={novoEmpregado.ativo}
               onChange={e => setNovoEmpregado({ ...novoEmpregado, ativo: e.target.checked })}
             />
-            Activo
+            Ativo
           </label>
-          <button type="submit">Guardar Cambios</button>
-          <button type="button" onClick={handleCancelEditEmpregado} style={{ marginLeft: 8 }}>Cancelar</button>
+          <button type="submit" className="btn btn-primary">Salvar Alterações</button>
+          <button type="button" onClick={handleCancelEditEmpregado} className="btn btn-secondary" style={{ marginLeft: 8 }}>Cancelar</button>
         </form>
       )}
 
-      <h2>Agregar Tipo de Servicio</h2>
+      <h2>Adicionar Tipo de Serviço</h2>
       <form onSubmit={handleAddTipoServico} className="admin-form" style={{ marginBottom: '24px' }}>
         <input
           type="text"
-          placeholder="Nombre del nuevo servicio"
+          placeholder="Nome do novo serviço"
           value={novoTipoServico}
           onChange={e => setNovoTipoServico(e.target.value)}
           required
         />
-        <button type="submit">Agregar Servicio</button>
+        <button type="submit" className="btn btn-success">Adicionar Serviço</button>
       </form>
 
-      <h2>Registrar Horario</h2>
+      <h2>Registrar Horário</h2>
       <form onSubmit={handleAddHorarioLocal} className="admin-form">
         <select
           value={novoHorario.profissionalId}
           onChange={e => setNovoHorario({ ...novoHorario, profissionalId: e.target.value })}
           required
         >
-          <option value="">Selecciona un empleado</option>
+          <option value="">Seleciona um empregado</option>
           {profissionais.map(prof => (
             <option key={prof.id} value={prof.id}>{prof.nome}</option>
           ))}
@@ -564,7 +555,7 @@ const Admin = () => {
           onChange={e => setNovoHorario({ ...novoHorario, servicoId: e.target.value })}
           required
         >
-          <option value="">Selecciona un servicio</option>
+          <option value="">Seleciona um serviço</option>
           {servicos.map(servico => (
             <option key={servico.id} value={servico.id}>{servico.nome}</option>
           ))}
@@ -598,20 +589,20 @@ const Admin = () => {
           onChange={e => setNovoHorario({ ...novoHorario, horaFinal: e.target.value })}
           required
         />
-        <button type="submit">Agregar a lista</button>
+        <button type="submit" className="btn btn-success">Adicionar à lista</button>
       </form>
       {horarios.length > 0 && (
         <div style={{ margin: '12px 0' }}>
-          <h4>Horarios a registrar:</h4>
+          <h4>Horários a registrar:</h4>
           <ul>
             {horarios.map((h, idx) => (
-              <li key={h.id}>{diasSemana.find(d => d.value === h.dia)?.label || h.dia} - {h.hora} a {h.horaFinal} <button onClick={() => setHorarios(horarios.filter(x => x.id !== h.id))}>Eliminar</button></li>
+              <li key={h.id}>{diasSemana.find(d => d.value === h.dia)?.label || h.dia} - {h.hora} a {h.horaFinal} <button className="btn btn-danger btn-sm" onClick={() => setHorarios(horarios.filter(x => x.id !== h.id))}>Eliminar</button></li>
             ))}
           </ul>
-          <button onClick={handleGuardarHorarios}>Guardar todos</button>
+          <button className="btn btn-primary" onClick={handleGuardarHorarios}>Salvar todos</button>
         </div>
       )}
-      <h3>Horarios registrados</h3>
+      <h3>Horários registrados</h3>
       <table className="admin-table">
         <thead>
           <tr>
@@ -640,17 +631,17 @@ const Admin = () => {
         </tbody>
       </table>
 
-      <h2>Servicios Disponibles</h2>
+      <h2>Serviços Disponíveis</h2>
       <table className="admin-table">
         <thead>
           <tr>
             <th>ID</th>
-            <th>Nombre</th>
-            <th>Duración (min)</th>
-            <th>Precio</th>
+            <th>Nome</th>
+            <th>Duração (min)</th>
+            <th>Preço</th>
             <th>Tipo</th>
-            <th>Activo</th>
-            <th>Acciones</th>
+            <th>Ativo</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -661,36 +652,36 @@ const Admin = () => {
               <td>{servico.duracao}</td>
               <td>{servico.preco}</td>
               <td>{tipos.find(t => t.id === servico.tipoId)?.nome || '-'}</td>
-              <td>{servico.ativo ? 'Sí' : 'No'}</td>
+              <td>{servico.ativo ? 'Sim' : 'Não'}</td>
               <td>
                 <button onClick={() => handleEditServico(servico)}>Editar</button>
-                <button onClick={() => handleToggleServicoAtivo(servico.id, servico.ativo)}>{servico.ativo ? 'Desactivar' : 'Activar'}</button>
-                <button onClick={() => handleDeleteServico(servico.id)} style={{ marginLeft: 8 }}>Eliminar</button>
+                <button onClick={() => handleToggleServicoAtivo(servico.id, servico.ativo)}>{servico.ativo ? 'Desativar' : 'Ativar'}</button>
+                <button onClick={() => handleDeleteServico(servico.id)} style={{ marginLeft: 8 }}>Excluir</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <h2>{editandoServico ? 'Editar Servicio' : 'Registrar Servicio'}</h2>
+      <h2>{editandoServico ? 'Editar Serviço' : 'Cadastrar Serviço'}</h2>
       <form onSubmit={editandoServico ? handleUpdateServico : handleAddServico} className="admin-form">
         <input
           type="text"
-          placeholder="Nombre"
+          placeholder="Nome"
           value={nuevoServico.nome}
           onChange={e => setNuevoServico({ ...nuevoServico, nome: e.target.value })}
           required
         />
         <input
           type="number"
-          placeholder="Duración (min)"
+          placeholder="Duração (min)"
           value={nuevoServico.duracao}
           onChange={e => setNuevoServico({ ...nuevoServico, duracao: e.target.value })}
           required
         />
         <input
           type="number"
-          placeholder="Precio"
+          placeholder="Preço"
           value={nuevoServico.preco}
           onChange={e => setNuevoServico({ ...nuevoServico, preco: e.target.value })}
           required
@@ -700,7 +691,7 @@ const Admin = () => {
           onChange={e => setNuevoServico({ ...nuevoServico, tipoId: e.target.value })}
           required
         >
-          <option value="">Selecciona un tipo</option>
+          <option value="">Selecione um tipo</option>
           {tipos.map(tipo => (
             <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
           ))}
@@ -711,10 +702,10 @@ const Admin = () => {
             checked={nuevoServico.ativo}
             onChange={e => setNuevoServico({ ...nuevoServico, ativo: e.target.checked })}
           />
-          Activo
+          Ativo
         </label>
-        <button type="submit">{editandoServico ? 'Guardar Cambios' : 'Registrar Servicio'}</button>
-        {editandoServico && <button type="button" onClick={handleCancelEditServico} style={{ marginLeft: 8 }}>Cancelar</button>}
+        <button type="submit" className="btn btn-success">{editandoServico ? 'Salvar Alterações' : 'Cadastrar Serviço'}</button>
+        {editandoServico && <button type="button" onClick={handleCancelEditServico} className="btn btn-secondary" style={{ marginLeft: 8 }}>Cancelar</button>}
       </form>
     </div>
   );

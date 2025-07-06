@@ -23,7 +23,7 @@ export default function PageInit() {
           setMensagem("Login admin bem-sucedido! Bem-vindo, " + adminData.nome);
           localStorage.setItem('usuarioLogado', JSON.stringify({ ...adminData, role: 'admin' }));
           setTimeout(() => {
-            navigate("/admin");
+            navigate("/Admin");
           }, 1000);
           return;
         }
