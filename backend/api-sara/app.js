@@ -12,6 +12,8 @@ const tipoRoutes = require("./routes/tipoRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const adminAuthRoutes = require("./routes/adminAuthRoutes");
 const horarioRoutes = require("./routes/horarioRoutes");
+const logRoutes = require("./routes/logRoutes");
+const subcategoriaRoutes = require("./routes/subcategoriaRoutes");
 
 const app = express();
 
@@ -25,6 +27,7 @@ const Profissional = require("./models/profissionalModel");
 const Agendamento = require("./models/agendamentoModel");
 const Admin = require("./models/adminModel");
 const Subcategoria = require("./models/subcategoriaModel");
+const LogAcao = require("./models/logAcaoModel").LogAcao;
 
 //  علاقات Sequelize
 // Cliente 1:N Agendamento
@@ -70,6 +73,8 @@ app.use("/agendamentos", agendamentoRoutes);
 app.use("/admins", adminRoutes);
 app.use("/admin-auth", adminAuthRoutes);
 app.use("/horarios", horarioRoutes);
+app.use("/api", logRoutes);
+app.use("/subcategorias", subcategoriaRoutes);
 
 // Crear admin automáticamente si no existe
 async function ensureAdmin() {

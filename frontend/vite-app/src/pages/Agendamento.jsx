@@ -11,6 +11,8 @@ export default function Agendamento({ onDateSelect = () => {} }) {
   const [horariosDisponiveis, setHorariosDisponiveis] = useState([]);
   const [categoriaManicure, setCategoriaManicure] = useState('');
   const [horaSelecionada, setHoraSelecionada] = useState('');
+  const [subcategorias, setSubcategorias] = useState([]);
+  const [subcategoriaSelecionada, setSubcategoriaSelecionada] = useState('');
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth(); // 0-indexed
@@ -41,6 +43,16 @@ export default function Agendamento({ onDateSelect = () => {} }) {
     return today.toLocaleDateString('pt-BR', { month: 'long' });
   };
 
+  // Función para normalizar acentos y minúsculas
+  function normalize(str) {
+    if (!str) return '';
+    return str
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/ç/g, 'c');
+  }
+
   useEffect(() => {
     // Cargar tipos de servicio al iniciar
     fetch('http://localhost:3000/tipos')
@@ -50,33 +62,58 @@ export default function Agendamento({ onDateSelect = () => {} }) {
     fetch('http://localhost:3000/servicos')
       .then(res => res.json())
       .then(data => setServicos(data));
+    // Cargar subcategorias al iniciar
+    fetch('http://localhost:3000/subcategorias')
+      .then(res => res.json())
+      .then(data => setSubcategorias(data));
   }, []);
 
   useEffect(() => {
-    // Cargar profissionais filtrados por serviço
+    // Cargar profissionais filtrados por serviço e subcategoria
     if (servicoSelecionado) {
       const servico = servicos.find(s => String(s.id) === String(servicoSelecionado));
       let especialidade = '';
+      let tipo = null;
       if (servico?.tipoId) {
-        const tipo = tipos.find(t => t.id === servico.tipoId);
+        tipo = tipos.find(t => t.id === servico.tipoId);
         especialidade = tipo?.nome || '';
       } else if (servico?.tipo && servico.tipo.nome) {
+        tipo = servico.tipo;
         especialidade = servico.tipo.nome;
       } else {
         especialidade = servico?.nome || '';
       }
+      // LOG extra para depuração de dados de servicio e tipo
+      console.log('[AGENDAMENTO] Objeto servico:', servico);
+      console.log('[AGENDAMENTO] Objeto tipo:', tipo);
       // Si es Manicure y hay categoría seleccionada, usar la categoría como especialidad
-      if (servico?.nome && servico.nome.toLowerCase() === 'manicure' && categoriaManicure) {
+      if (servico?.nome && normalize(servico.nome) === 'manicure' && categoriaManicure) {
         especialidade = categoriaManicure;
       }
+      // Si es Corte de cabelo y hay subcategoria seleccionada, usar la subcategoria
+      if (servico?.nome && normalize(servico.nome).includes('cabelo') && subcategoriaSelecionada) {
+        especialidade = subcategoriaSelecionada;
+      }
+      // Busca de profissionais: garantir que massagem sempre busca por 'massagem'
+      if ((tipo && normalize(tipo.nome).includes('massagem')) || (servico?.nome && normalize(servico.nome).includes('massagem'))) {
+        especialidade = 'massagem';
+      }
+      // LOG para depuração
+      console.log('[AGENDAMENTO] Buscando profissionais para especialidade:', especialidade, '| Normalizado:', normalize(especialidade));
       fetch(`http://localhost:3000/profissionais?especialidade=${encodeURIComponent(especialidade)}`)
         .then(res => res.json())
-        .then(data => setProfissionais(data));
+        .then(data => {
+          console.log('[AGENDAMENTO] Resposta de profissionais:', data);
+          setProfissionais(Array.isArray(data) ? data : []);
+        });
+      setProfissionalSelecionado('');
+      setHoraSelecionada('');
     } else {
       setProfissionais([]);
+      setProfissionalSelecionado('');
+      setHoraSelecionada('');
     }
-    setProfissionalSelecionado('');
-  }, [servicoSelecionado, servicos, tipos, categoriaManicure]);
+  }, [servicoSelecionado, servicos, tipos, categoriaManicure, subcategoriaSelecionada]);
 
   useEffect(() => {
     // Cargar horarios disponibles cuando se selecciona fecha, servicio y profesional
@@ -125,22 +162,51 @@ export default function Agendamento({ onDateSelect = () => {} }) {
       alert('Preencha todos os campos obrigatórios!');
       return;
     }
-    // Verificar se o profissional corresponde à especialidade/categoria
+    // Verificar se o profissional corresponde à especialidade/categoria (insensible a acentos y mayúsculas)
     const profissional = profissionais.find(p => String(p.id) === String(profissionalSelecionado));
     let especialidadeEsperada = '';
     const servico = servicos.find(s => String(s.id) === String(servicoSelecionado));
+    let tipo = null;
     if (servico?.tipoId) {
-      const tipo = tipos.find(t => t.id === servico.tipoId);
+      tipo = tipos.find(t => t.id === servico.tipoId);
       especialidadeEsperada = tipo?.nome || '';
     } else if (servico?.tipo && servico.tipo.nome) {
       especialidadeEsperada = servico.tipo.nome;
     } else {
       especialidadeEsperada = servico?.nome || '';
     }
-    if (servico?.nome && servico.nome.toLowerCase() === 'manicure' && categoriaManicure) {
+    // LOG extra para depuração
+    console.log('[AGENDAMENTO][VALIDACAO] Objeto servico:', servico);
+    console.log('[AGENDAMENTO][VALIDACAO] Objeto tipo:', tipo);
+    // Determinar especialidade esperada corretamente
+    if ((tipo && normalize(tipo.nome).includes('massagem')) || (servico?.nome && normalize(servico.nome).includes('massagem'))) {
+      especialidadeEsperada = 'massagem';
+    } else if (servico?.nome && normalize(servico.nome) === 'manicure' && categoriaManicure) {
       especialidadeEsperada = categoriaManicure;
+    } else if (servico?.nome && normalize(servico.nome).includes('cabelo') && subcategoriaSelecionada) {
+      especialidadeEsperada = subcategoriaSelecionada;
+    } else if (servico?.nome && normalize(servico.nome).includes('coloracao') && subcategoriaSelecionada) {
+      especialidadeEsperada = subcategoriaSelecionada;
+    } else if (servico?.tipoId) {
+      tipo = tipos.find(t => t.id === servico.tipoId);
+      especialidadeEsperada = tipo?.nome || '';
+    } else if (servico?.tipo && servico.tipo.nome) {
+      especialidadeEsperada = servico.tipo.nome;
+    } else {
+      especialidadeEsperada = servico?.nome || '';
     }
-    if (!profissional?.especialidade || profissional.especialidade.toLowerCase() !== especialidadeEsperada.toLowerCase()) {
+    // LOG extra para depuração
+    console.log('[AGENDAMENTO] Comparando:', {
+      profissionalEspecialidade: profissional?.especialidade,
+      profissionalEspecialidadeNormalizada: normalize(profissional?.especialidade),
+      especialidadeEsperada,
+      especialidadeEsperadaNormalizada: normalize(especialidadeEsperada)
+    });
+    if (!profissional?.especialidade ||
+      (!normalize(profissional.especialidade).includes(normalize(especialidadeEsperada)) &&
+       !normalize(especialidadeEsperada).includes(normalize(profissional.especialidade)) &&
+       !normalize(profissional.especialidade).startsWith(normalize(especialidadeEsperada)) &&
+       !normalize(especialidadeEsperada).startsWith(normalize(profissional.especialidade)))) {
       alert('O profissional selecionado não corresponde à especialidade/categoria do serviço. Por favor, escolha outro profissional.');
       return;
     }
@@ -205,6 +271,18 @@ export default function Agendamento({ onDateSelect = () => {} }) {
           </select>
         </div>
       )}
+      {/* Dropitem para subcategoria de cabelo */}
+      {servicoSelecionado && servicos.find(s => String(s.id) === String(servicoSelecionado))?.nome.toLowerCase().includes('cabelo') && (
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ color: '#C8377C', fontWeight: 'bold', fontSize: '1.1rem' }}>Subcategoria de Cabelo:</label>
+          <select value={subcategoriaSelecionada} onChange={e => setSubcategoriaSelecionada(e.target.value)} style={{ marginLeft: 8, padding: 8, borderRadius: 4 }}>
+            <option value="">Selecione...</option>
+            {subcategorias.filter(sc => tipos.find(t => t.id === sc.tipoId)?.nome?.toLowerCase() === 'cabelo').map(sc => (
+              <option key={sc.id} value={sc.nome}>{sc.nome}</option>
+            ))}
+          </select>
+        </div>
+      )}
       {servicoSelecionado && (
         <div style={{ marginBottom: 16 }}>
           <label style={{ color: '#C8377C', fontWeight: 'bold', fontSize: '1.1rem' }}>Escolha o profissional:</label>
@@ -212,6 +290,11 @@ export default function Agendamento({ onDateSelect = () => {} }) {
             <option value="">Selecione...</option>
             {profissionais.map(p => <option key={p.id} value={p.id}>{p.nome}</option>)}
           </select>
+        </div>
+      )}
+      {servicoSelecionado && profissionais.length === 0 && (
+        <div style={{ marginBottom: 16 }}>
+          <span style={{ color: '#e75480', fontWeight: 'bold' }}>Nenhum profissional disponível para este serviço.</span>
         </div>
       )}
       {profissionais.length > 0 && (

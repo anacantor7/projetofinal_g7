@@ -19,6 +19,7 @@ export default function PageInit() {
           body: JSON.stringify({ email, senha: password })
         });
         const adminData = await adminResponse.json();
+        console.log('Admin login response:', adminResponse.status, adminData); // <-- Debug
         if (adminResponse.ok) {
           setMensagem("Login admin bem-sucedido! Bem-vindo, " + adminData.nome);
           localStorage.setItem('usuarioLogado', JSON.stringify({ ...adminData, role: 'admin' }));
@@ -28,6 +29,7 @@ export default function PageInit() {
           return;
         }
       } catch (error) {
+        console.log('Admin login error:', error); // <-- Debug
         // Continua para login cliente
       }
       // Si no es admin, intenta login cliente
@@ -38,6 +40,7 @@ export default function PageInit() {
           body: JSON.stringify({ email, senha: password })
         });
         const data = await response.json();
+        console.log('Cliente login response:', response.status, data); // <-- Debug
         if (response.ok) {
           setMensagem("Login bem-sucedido! Bem-vindo, " + data.cliente.nome);
           localStorage.setItem('usuarioLogado', JSON.stringify(data.cliente));
@@ -48,6 +51,7 @@ export default function PageInit() {
           setMensagem(data.erro || "Erro ao fazer login");
         }
       } catch (error) {
+        console.log('Cliente login error:', error); // <-- Debug
         setMensagem("Erro de conexão com o servidor");
       }
     } else {
@@ -85,7 +89,7 @@ export default function PageInit() {
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="username"
                 required
-                style={{ background: '#fff', border: '1px solid #ccc', borderRadius: '4px', padding: '8px', width: '100%' }}
+                style={{ background: '#fff', border: '1px solid #ccc', borderRadius: '4px', padding: '8px', width: '100%', color: '#d63384' }}
               />
             </div>
             <div className="input-group">
@@ -98,7 +102,7 @@ export default function PageInit() {
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
                 required
-                style={{ background: '#fff', border: '1px solid #ccc', borderRadius: '4px', padding: '8px', width: '100%' }}
+                style={{ background: '#fff', border: '1px solid #ccc', borderRadius: '4px', padding: '8px', width: '100%', color: '#d63384' }}
               />
             </div>
             <button className="login-btn" onClick={handleLogin} style={{ width: '100%' }}>Login</button>

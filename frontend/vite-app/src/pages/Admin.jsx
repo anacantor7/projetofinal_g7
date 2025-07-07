@@ -18,6 +18,11 @@ const Admin = () => {
   const [editandoUsuario, setEditandoUsuario] = useState(null);
   const [novoUsuario, setNovoUsuario] = useState({ nombre: '', email: '' });
   const [feedback, setFeedback] = useState({ message: '', type: '' });
+  const [logs, setLogs] = useState([]);
+  const [subcategorias, setSubcategorias] = useState([]);
+  const [nuevaSubcategoria, setNuevaSubcategoria] = useState({ nome: '', tipoId: '' });
+  const [editandoSubcategoria, setEditandoSubcategoria] = useState(null);
+  const [showAddEmpregado, setShowAddEmpregado] = useState(false);
   const navigate = useNavigate();
 
   // Días de la semana para selección múltiple
@@ -119,6 +124,15 @@ const Admin = () => {
             .then(res => res.json())
             .then(data2 => setTipos(data2));
         });
+      // Cargar logs de acciones
+      fetch('http://localhost:3000/api/log-acao')
+        .then(res => res.json())
+        .then(data => setLogs(data))
+        .catch(err => setLogs([]));
+      // Cargar subcategorias
+      fetch('http://localhost:3000/subcategorias')
+        .then(res => res.json())
+        .then(data => setSubcategorias(data));
     }
   }, [navigate]);
 
@@ -168,6 +182,11 @@ const Admin = () => {
     fetch('http://localhost:3000/horarios')
       .then(res => res.json())
       .then(data => setHorariosRegistrados(data));
+  };
+  const reloadSubcategorias = () => {
+    fetch('http://localhost:3000/subcategorias')
+      .then(res => res.json())
+      .then(data => setSubcategorias(data));
   };
 
   // Eliminar empleado
@@ -255,6 +274,12 @@ const Admin = () => {
     } catch (err) {
       setFeedback({ message: 'Error al eliminar horario', type: 'error' });
     }
+  };
+
+  // Eliminar subcategoria del backend
+  const handleDeleteSubcategoria = async (id) => {
+    await fetch(`http://localhost:3000/subcategorias/${id}`, { method: 'DELETE' });
+    setSubcategorias(subcategorias.filter(s => s.id !== id));
   };
 
   // Editar horario (carga en el formulario)
@@ -403,17 +428,41 @@ const Admin = () => {
     setNovoUsuario({ nombre: '', email: '' });
   };
 
+  // CRUD Subcategorias
+  const handleAddSubcategoria = async (e) => {
+    e.preventDefault();
+    await fetch('http://localhost:3000/subcategorias', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(nuevaSubcategoria)
+    });
+    setNuevaSubcategoria({ nome: '', tipoId: '' });
+    fetch('http://localhost:3000/subcategorias')
+      .then(res => res.json())
+      .then(data => setSubcategorias(data));
+  };
+
+  const handleEditSubcategoria = (sub) => {
+    setEditandoSubcategoria(sub.id);
+    setNuevaSubcategoria({ nome: sub.nome, tipoId: sub.tipoId });
+  };
+
+  const handleUpdateSubcategoria = async (e) => {
+    e.preventDefault();
+    await fetch(`http://localhost:3000/subcategorias/${editandoSubcategoria}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(nuevaSubcategoria)
+    });
+    setEditandoSubcategoria(null);
+    setNuevaSubcategoria({ nome: '', tipoId: '' });
+    fetch('http://localhost:3000/subcategorias')
+      .then(res => res.json())
+      .then(data => setSubcategorias(data));
+  };
+
   return (
     <div className="admin-container">
-      <button
-        onClick={() => {
-          localStorage.removeItem('usuarioLogado');
-          navigate('/');
-        }}
-        className="btn btn-danger logout-btn"
-      >
-        Cerrar sesión
-      </button>
       <h1>Panel de Administração</h1>
       {feedback.message && (
         <div className={`alert ${feedback.type === 'success' ? 'alert-success' : 'alert-danger'}`}>{feedback.message}</div>
@@ -463,6 +512,43 @@ const Admin = () => {
       )}
 
       <h2>Funcionários</h2>
+      <button className="btn btn-success" style={{ marginBottom: 12 }} onClick={() => setShowAddEmpregado(!showAddEmpregado)}>
+        {showAddEmpregado ? 'Cancelar' : 'Adicionar Funcionário'}
+      </button>
+      {showAddEmpregado && (
+        <form onSubmit={handleAddEmpregado} className="admin-form" style={{ marginBottom: 18 }}>
+          <input
+            type="text"
+            placeholder="Nome"
+            value={novoEmpregado.nome}
+            onChange={e => setNovoEmpregado({ ...novoEmpregado, nome: e.target.value })}
+            required
+          />
+          <input
+            type="text"
+            placeholder="Telefone"
+            value={novoEmpregado.telefone}
+            onChange={e => setNovoEmpregado({ ...novoEmpregado, telefone: e.target.value })}
+            required
+          />
+          <input
+            type="text"
+            placeholder="Especialidade"
+            value={novoEmpregado.especialidade}
+            onChange={e => setNovoEmpregado({ ...novoEmpregado, especialidade: e.target.value })}
+            required
+          />
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '8px 0' }}>
+            <input
+              type="checkbox"
+              checked={novoEmpregado.ativo}
+              onChange={e => setNovoEmpregado({ ...novoEmpregado, ativo: e.target.checked })}
+            />
+            Ativo
+          </label>
+          <button type="submit" className="btn btn-primary">Salvar Funcionário</button>
+        </form>
+      )}
       <table className="admin-table">
         <thead>
           <tr>
@@ -707,6 +793,86 @@ const Admin = () => {
         <button type="submit" className="btn btn-success">{editandoServico ? 'Salvar Alterações' : 'Cadastrar Serviço'}</button>
         {editandoServico && <button type="button" onClick={handleCancelEditServico} className="btn btn-secondary" style={{ marginLeft: 8 }}>Cancelar</button>}
       </form>
+
+      <h2>Logs de Ações</h2>
+      <table style={{ width: '100%', background: '#fff', borderRadius: '8px', boxShadow: '0 2px 8px #0001', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr style={{ background: '#ffd1dc', color: '#C8377C' }}>
+            <th style={{ padding: '8px', borderBottom: '1px solid #eee' }}>Usuário</th>
+            <th style={{ padding: '8px', borderBottom: '1px solid #eee' }}>Ação</th>
+            <th style={{ padding: '8px', borderBottom: '1px solid #eee' }}>Data/Hora</th>
+          </tr>
+        </thead>
+        <tbody>
+          {logs.length === 0 ? (
+            <tr><td colSpan="3" style={{ textAlign: 'center', color: '#888' }}>Nenhum log encontrado.</td></tr>
+          ) : (
+            logs.map(log => (
+              <tr key={log.id}>
+                <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{log.usuario}</td>
+                <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{log.acao}</td>
+                <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{log.dataHora || log.data_hora}</td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+
+      <h2>Subcategorias</h2>
+      <table className="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Tipo</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {subcategorias.map(sub => (
+            <tr key={sub.id}>
+              <td>{sub.id}</td>
+              <td>{sub.nome}</td>
+              <td>{tipos.find(t => t.id === sub.tipoId)?.nome || sub.tipoId}</td>
+              <td>
+                <button onClick={() => handleEditSubcategoria(sub)}>Editar</button>
+                <button onClick={() => handleDeleteSubcategoria(sub.id)} style={{ marginLeft: 8 }}>Excluir</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <form onSubmit={editandoSubcategoria ? handleUpdateSubcategoria : handleAddSubcategoria} className="admin-form">
+        <input
+          type="text"
+          placeholder="Nome da subcategoria"
+          value={nuevaSubcategoria.nome}
+          onChange={e => setNuevaSubcategoria({ ...nuevaSubcategoria, nome: e.target.value })}
+          required
+        />
+        <select
+          value={nuevaSubcategoria.tipoId}
+          onChange={e => setNuevaSubcategoria({ ...nuevaSubcategoria, tipoId: e.target.value })}
+          required
+        >
+          <option value="">Selecione um tipo</option>
+          {tipos.map(tipo => (
+            <option key={tipo.id} value={tipo.id}>{tipo.nome}</option>
+          ))}
+        </select>
+        <button type="submit" className="btn btn-success">{editandoSubcategoria ? 'Salvar Alterações' : 'Adicionar Subcategoria'}</button>
+        {editandoSubcategoria && <button type="button" onClick={() => { setEditandoSubcategoria(null); setNuevaSubcategoria({ nome: '', tipoId: '' }); }} className="btn btn-secondary" style={{ marginLeft: 8 }}>Cancelar</button>}
+      </form>
+      <button
+        onClick={() => {
+          localStorage.removeItem('usuarioLogado');
+          navigate('/');
+        }}
+        className="btn btn-danger logout-btn"
+        style={{ marginTop: 32 }}
+      >
+        Cerrar sesión
+      </button>
     </div>
   );
 };
