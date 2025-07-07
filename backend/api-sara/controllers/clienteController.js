@@ -6,8 +6,6 @@ async function listarClientes(req, res) {
 
   try {
     const where = {};
-
-    // إذا تم إرسال ?ativo=true أو false
     if (ativo !== undefined) {
       where.ativo = ativo === "true";
     }
@@ -45,23 +43,21 @@ async function buscarClientePorId(req, res) {
 
 // POST /clientes
 async function criarCliente(req, res) {
-  const { nome, telefone, email, senha } = req.body;
+  const { nome, telefone, observacoes } = req.body;
 
   try {
-    // Verificar si ya existe un cliente con el mismo email
+    // Verificar duplicidade por nome + telefone
     const clienteExistente = await Cliente.findOne({
-      where: { email },
+      where: { nome, telefone },
     });
 
     if (clienteExistente) {
       return res.status(400).json({
-        erro: "Já existe um cliente cadastrado com esse email.",
+        erro: "Já existe um cliente cadastrado com esse nome e telefone.",
       });
     }
 
-    // Crear el cliente si no existe
-    const novoCliente = await Cliente.create({ nome, telefone, email, senha });
-
+    const novoCliente = await Cliente.create({ nome, telefone, observacoes });
     res.status(201).json(novoCliente);
   } catch (error) {
     res.status(400).json({
@@ -73,30 +69,11 @@ async function criarCliente(req, res) {
   }
 }
 
-// POST /clientes/login
-async function loginCliente(req, res) {
-  const { email, senha } = req.body;
-  try {
-    if (!email || !senha) {
-      return res.status(400).json({ erro: "Email e senha são obrigatórios." });
-    }
-    const cliente = await Cliente.findOne({ where: { email } });
-    if (!cliente || cliente.senha !== senha) {
-      return res.status(401).json({ erro: "Email ou senha inválidos." });
-    }
-    res.status(200).json({
-      mensagem: "Login bem-sucedido",
-      cliente: { id: cliente.id, nome: cliente.nome, email: cliente.email },
-    });
-  } catch (error) {
-    res.status(500).json({ erro: "Erro ao realizar login" });
-  }
-}
-
 // PUT /clientes/:id
 async function atualizarCliente(req, res) {
   const { id } = req.params;
   const { nome, telefone, observacoes } = req.body;
+
   try {
     const cliente = await Cliente.findByPk(id);
     if (!cliente)
@@ -173,5 +150,4 @@ module.exports = {
   atualizarCliente,
   toggleClienteAtivo,
   deletarCliente,
-  loginCliente,
 };

@@ -1,4 +1,4 @@
-# Instruções Importantes para Integração do Front-End com o Back-End
+# Integração do Front-End com o Back-End – Guia Técnico
 
 ## 1. Consumo correto da API
 
@@ -88,7 +88,7 @@ A interface deve permitir cadastrar profissionais com os seguintes campos obriga
 - telefone
 - especialidade
 
-Essa tela é essencial para que o sistema funcione corretamente.
+Essa funcionalidade garante o correto funcionamento dos fluxos de agendamento.
 
 ---
 
@@ -137,12 +137,11 @@ Sem essa tela, não será possível cadastrar serviços de forma completa.
 
 ## 10. Botão 'Novo Cliente' e formulário na mesma tela
 
-Notei que há um botão 'Novo Cliente', mas os campos de nome, telefone e observações já estão na mesma tela.
-Só pra confirmar: a ideia é abrir outro formulário separado?
-Ou talvez possamos deixar o botão fora e manter o formulário direto, pra facilitar o uso.
+Verificamos que há um botão 'Novo Cliente', e ao mesmo tempo os campos de nome, telefone e observações já estão visíveis na tela.
+Seria interessante confirmar se o botão abrirá um formulário separado ou se o ideal seria manter o formulário direto, otimizando a experiência do(a) usuário(a).
 
 ---
 
 ## 🔍 Observação final
 
-Nem tudo consigo verificar apenas pelo Figma, então é importante revisar também os códigos do React para garantir que tudo esteja em conformidade com as estruturas e regras do back-end (nomes dos campos, validações, filtros etc.).
+Nem todos os comportamentos podem ser verificados apenas pelo Figma. Por isso, é importante revisar também os códigos do React para garantir a conformidade com o back-end (nomes dos campos, validações, filtros etc.).
