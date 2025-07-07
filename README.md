@@ -49,7 +49,7 @@ Com ela, é possível cadastrar clientes, serviços, profissionais e agendamento
 
 | Nome          | Responsável por                                         |
 | ------------- | ------------------------------------------------------- |
-| **Ana Maria** | Design da interface (Figma) + Front-End (React)         |
+| **Ana Maria** | Design da interface (Figma) + Front-End (React) +  Banco de dados (SQLite) + Rotas  |
 | **Sara**      | API (Node.js/Express) + Banco de dados (SQLite) + Rotas |
 
 ---
