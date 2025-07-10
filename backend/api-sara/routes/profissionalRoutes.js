@@ -9,6 +9,7 @@ const {
   criarProfissional,
   atualizarProfissional,
   toggleAtivo,
+  deletarProfissional,
 } = require('../controllers/profissionalController');
 
 // GET /profissionais
@@ -25,5 +26,8 @@ router.put('/:id', atualizarProfissional);
 
 // PUT /profissionais/:id/ativo
 router.put('/:id/ativo', toggleAtivo);
+
+// DELETE /profissionais/:id
+router.delete('/:id', deletarProfissional);
 
 module.exports = router;

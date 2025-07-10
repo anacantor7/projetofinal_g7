@@ -148,10 +148,32 @@ async function toggleAtivo(req, res) {
   }
 }
 
+// DELETE /profissionais/:id
+async function deletarProfissional(req, res) {
+  const { id } = req.params;
+  try {
+    const profissional = await Profissional.findByPk(id);
+    if (!profissional) {
+      return res.status(404).json({ erro: "Profissional não encontrado" });
+    }
+
+    await profissional.destroy();
+    res.status(200).json({ mensagem: "Profissional eliminado com sucesso" });
+  } catch (error) {
+    res.status(400).json({
+      erro:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Erro ao eliminar profissional",
+    });
+  }
+}
+
 module.exports = {
   listarProfissionais,
   buscarProfissionalPorId,
   criarProfissional,
   atualizarProfissional,
   toggleAtivo,
+  deletarProfissional,
 };
