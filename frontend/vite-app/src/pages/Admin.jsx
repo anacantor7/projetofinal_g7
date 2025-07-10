@@ -27,11 +27,11 @@ const Admin = () => {
 
   // Días de la semana para selección múltiple
   const diasSemana = [
-    { value: 'Lunes', label: 'Lunes' },
-    { value: 'Martes', label: 'Martes' },
-    { value: 'Miércoles', label: 'Miércoles' },
-    { value: 'Jueves', label: 'Jueves' },
-    { value: 'Viernes', label: 'Viernes' },
+    { value: 'Lunes', label: 'Segunda' },
+    { value: 'Martes', label: 'Terça' },
+    { value: 'Miércoles', label: 'Quarta' },
+    { value: 'Jueves', label: 'Quinta' },
+    { value: 'Viernes', label: 'Sexta' },
     { value: 'Sábado', label: 'Sábado' },
     { value: 'Domingo', label: 'Domingo' },
   ];
@@ -187,6 +187,10 @@ const Admin = () => {
     fetch('http://localhost:3000/subcategorias')
       .then(res => res.json())
       .then(data => setSubcategorias(data));
+  };
+  const handleLogout = () => {
+    localStorage.removeItem('usuarioLogado');
+    navigate('/');
   };
 
   // Eliminar empleado
@@ -461,8 +465,14 @@ const Admin = () => {
       .then(data => setSubcategorias(data));
   };
 
+  const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+
   return (
     <div className="admin-container">
+      <div className="user-info">
+        <div>👤 {usuarioLogado?.nombre || 'Administrador'}</div>
+        <div className="user-role">Administrador</div>
+      </div>
       <h1>Panel de Administração</h1>
       {feedback.message && (
         <div className={`alert ${feedback.type === 'success' ? 'alert-success' : 'alert-danger'}`}>{feedback.message}</div>
@@ -481,10 +491,10 @@ const Admin = () => {
           {usuarios.map(usuario => (
             <tr key={usuario.id}>
               <td>{usuario.id}</td>
-              <td>{usuario.nombre}</td>
+              <td>{usuario.nombre?.charAt(0).toUpperCase() + usuario.nombre?.slice(1).toLowerCase()}</td>
               <td>{usuario.email}</td>
               <td>
-                <button onClick={() => handleEditUsuario(usuario)}>Editar</button>
+                <button onClick={() => handleEditUsuario(usuario)} className="btn btn-primary btn-sm">Editar</button>
               </td>
             </tr>
           ))}
@@ -507,12 +517,12 @@ const Admin = () => {
             required
           />
           <button type="submit" className="btn btn-primary">Salvar Alterações</button>
-          <button type="button" onClick={handleCancelEditUsuario} className="btn btn-secondary" style={{ marginLeft: 8 }}>Cancelar</button>
+          <button type="button" onClick={handleCancelEditUsuario} className="btn btn-secondary">Cancelar</button>
         </form>
       )}
 
       <h2>Funcionários</h2>
-      <button className="btn btn-success" style={{ marginBottom: 12 }} onClick={() => setShowAddEmpregado(!showAddEmpregado)}>
+      <button className="btn btn-success" onClick={() => setShowAddEmpregado(!showAddEmpregado)}>
         {showAddEmpregado ? 'Cancelar' : 'Adicionar Funcionário'}
       </button>
       {showAddEmpregado && (
@@ -564,13 +574,13 @@ const Admin = () => {
           {profissionais.map(emp => (
             <tr key={emp.id}>
               <td>{emp.id}</td>
-              <td>{emp.nome}</td>
+              <td>{emp.nome?.charAt(0).toUpperCase() + emp.nome?.slice(1).toLowerCase()}</td>
               <td>{emp.telefone}</td>
               <td>{emp.especialidade}</td>
               <td>{emp.ativo ? 'Sim' : 'Não'}</td>
               <td>
-                <button onClick={() => handleEditEmpregado(emp)}>Editar</button>
-                <button onClick={() => handleDeleteEmpregado(emp.id)} style={{ marginLeft: 8 }}>Excluir</button>
+                <button onClick={() => handleEditEmpregado(emp)} className="btn btn-primary btn-sm">Editar</button>
+                <button onClick={() => handleDeleteEmpregado(emp.id)} className="btn btn-danger btn-sm">Excluir</button>
               </td>
             </tr>
           ))}
@@ -608,21 +618,11 @@ const Admin = () => {
             Ativo
           </label>
           <button type="submit" className="btn btn-primary">Salvar Alterações</button>
-          <button type="button" onClick={handleCancelEditEmpregado} className="btn btn-secondary" style={{ marginLeft: 8 }}>Cancelar</button>
+          <button type="button" onClick={handleCancelEditEmpregado} className="btn btn-secondary">Cancelar</button>
         </form>
       )}
 
-      <h2>Adicionar Tipo de Serviço</h2>
-      <form onSubmit={handleAddTipoServico} className="admin-form" style={{ marginBottom: '24px' }}>
-        <input
-          type="text"
-          placeholder="Nome do novo serviço"
-          value={novoTipoServico}
-          onChange={e => setNovoTipoServico(e.target.value)}
-          required
-        />
-        <button type="submit" className="btn btn-success">Adicionar Serviço</button>
-      </form>
+      
 
       <h2>Registrar Horário</h2>
       <form onSubmit={handleAddHorarioLocal} className="admin-form">
@@ -692,12 +692,12 @@ const Admin = () => {
       <table className="admin-table">
         <thead>
           <tr>
-            <th>Empleado</th>
-            <th>Servicio</th>
-            <th>Día</th>
+            <th>Empregado</th>
+            <th>Serviços</th>
+            <th>Dia</th>
             <th>Hora inicio</th>
             <th>Hora final</th>
-            <th>Acciones</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -735,14 +735,13 @@ const Admin = () => {
             <tr key={servico.id}>
               <td>{servico.id}</td>
               <td>{servico.nome}</td>
-              <td>{servico.duracao}</td>
-              <td>{servico.preco}</td>
+              <td>{servico.duracao || '-'}</td>
+              <td>{servico.preco || '-'}</td>
               <td>{tipos.find(t => t.id === servico.tipoId)?.nome || '-'}</td>
               <td>{servico.ativo ? 'Sim' : 'Não'}</td>
               <td>
-                <button onClick={() => handleEditServico(servico)}>Editar</button>
-                <button onClick={() => handleToggleServicoAtivo(servico.id, servico.ativo)}>{servico.ativo ? 'Desativar' : 'Ativar'}</button>
-                <button onClick={() => handleDeleteServico(servico.id)} style={{ marginLeft: 8 }}>Excluir</button>
+                <button onClick={() => handleEditServico(servico)} className="btn btn-primary btn-sm">Editar</button>
+                <button onClick={() => handleDeleteServico(servico.id)} className="btn btn-danger btn-sm">Excluir</button>
               </td>
             </tr>
           ))}
@@ -791,7 +790,7 @@ const Admin = () => {
           Ativo
         </label>
         <button type="submit" className="btn btn-success">{editandoServico ? 'Salvar Alterações' : 'Cadastrar Serviço'}</button>
-        {editandoServico && <button type="button" onClick={handleCancelEditServico} className="btn btn-secondary" style={{ marginLeft: 8 }}>Cancelar</button>}
+        {editandoServico && <button type="button" onClick={handleCancelEditServico} className="btn btn-secondary">Cancelar</button>}
       </form>
 
       <h2>Logs de Ações</h2>
@@ -835,8 +834,8 @@ const Admin = () => {
               <td>{sub.nome}</td>
               <td>{tipos.find(t => t.id === sub.tipoId)?.nome || sub.tipoId}</td>
               <td>
-                <button onClick={() => handleEditSubcategoria(sub)}>Editar</button>
-                <button onClick={() => handleDeleteSubcategoria(sub.id)} style={{ marginLeft: 8 }}>Excluir</button>
+                <button onClick={() => handleEditSubcategoria(sub)} className="btn btn-primary btn-sm">Editar</button>
+                <button onClick={() => handleDeleteSubcategoria(sub.id)} className="btn btn-danger btn-sm">Excluir</button>
               </td>
             </tr>
           ))}
@@ -861,18 +860,9 @@ const Admin = () => {
           ))}
         </select>
         <button type="submit" className="btn btn-success">{editandoSubcategoria ? 'Salvar Alterações' : 'Adicionar Subcategoria'}</button>
-        {editandoSubcategoria && <button type="button" onClick={() => { setEditandoSubcategoria(null); setNuevaSubcategoria({ nome: '', tipoId: '' }); }} className="btn btn-secondary" style={{ marginLeft: 8 }}>Cancelar</button>}
+        {editandoSubcategoria && <button type="button" onClick={() => { setEditandoSubcategoria(null); setNuevaSubcategoria({ nome: '', tipoId: '' }); }} className="btn btn-secondary">Cancelar</button>}
       </form>
-      <button
-        onClick={() => {
-          localStorage.removeItem('usuarioLogado');
-          navigate('/');
-        }}
-        className="btn btn-danger logout-btn"
-        style={{ marginTop: 32 }}
-      >
-        Cerrar sesión
-      </button>
+    <button onClick={handleLogout} className="logout-btn">🚪 Sair</button>
     </div>
   );
 };

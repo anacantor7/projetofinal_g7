@@ -7,8 +7,8 @@ const Header = () => {
     <header style={{
       display: 'flex',
       alignItems: 'center',
-      gap: '16px',
-      padding: '18px 0 14px 0',
+      gap: '24px',
+      padding: '32px 0 28px 0',
       justifyContent: 'center',
       background: 'linear-gradient(90deg, #fff 60%, #fce4ec 100%)',
       boxShadow: '0 2px 16px 0 #f8bbd0',
@@ -21,12 +21,12 @@ const Header = () => {
         src={logo}
         alt="Logo Bellizy"
         style={{
-          height: '48px',
-          width: '48px',
+          height: '80px',
+          width: '80px',
           objectFit: 'contain',
           borderRadius: '50%',
-          border: '2px solid #C8377C',
-          boxShadow: '0 2px 8px #f8bbd0',
+          border: '3px solid #C8377C',
+          boxShadow: '0 4px 12px #f8bbd0',
           transition: 'transform 0.3s',
           cursor: 'pointer'
         }}
@@ -34,8 +34,8 @@ const Header = () => {
         onMouseOut={e => (e.currentTarget.style.transform = 'none')}
       />
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-        <h1 style={{ color: '#C8377C', fontWeight: 'bold', fontSize: '2rem', margin: 0, letterSpacing: '2px' }}>BELLIZY</h1>
-        <span style={{ color: '#C8377C', fontSize: '0.95rem', fontWeight: 400, marginTop: '-2px', opacity: 0.8 }}>
+        <h1 style={{ color: '#C8377C', fontWeight: 'bold', fontSize: '2.5rem', margin: 0, letterSpacing: '2px' }}>BELLIZY</h1>
+        <span style={{ color: '#C8377C', fontSize: '1.1rem', fontWeight: 400, marginTop: '-4px', opacity: 0.8 }}>
           Beleza ao seu alcance
         </span>
       </div>

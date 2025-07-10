@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../App.css'; // Unificar estilos en App.css
 import ErrorBoundary from '../components/ErrorBoundary';
+import { capitalizeName } from '../utils/textUtils';
 
 function PagSeg() {
   const [name, setName] = useState('');
@@ -67,14 +68,15 @@ function PagSeg() {
   };
 
   return (
-    <div className="PagSeg-body">
-      <div className="PagSeg-header" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '6px' }}>
-        <span className="PagSeg-user" style={{ fontWeight: 'bold', color: '#C8377C' }}>Usuário logado: <b>{name}</b></span>
-        <button className="PagSeg-logout" onClick={handleLogout} style={{ fontSize: '0.85rem', padding: '4px 14px', borderRadius: '8px', background: '#eee', color: '#C8377C', border: '1px solid #C8377C', marginTop: '2px', alignSelf: 'flex-start' }}>Sair</button>
+    <div className="PagSeg-body" style={{ paddingTop: '2rem' }}>
+      <div className="user-info">
+        <div>👤 {capitalizeName(name)}</div>
+        <div style={{ fontSize: '0.9rem', opacity: 0.9, marginTop: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Cliente</div>
       </div>
-      <h1>Bem-vindo, {name}</h1>
-      <p>Você está na página de serviços.</p>
-      <p>Selecione uma opção abaixo:</p>
+      <button onClick={handleLogout} className="logout-btn">🚪 Sair</button>
+      <h1>Bem-vindo, {capitalizeName(name)}</h1>
+      <h2>Você está na página de serviços.</h2>
+      <h2>Selecione uma opção abaixo:</h2>
       <div className="PagSeg-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '18px', marginTop: '24px' }}>
         <button className="PagSeg-btn" onClick={() => registrarEIr('Agendar', '/agendamento')} style={{ width: '220px' }}>Agendar</button>
         <button className="PagSeg-btn" onClick={() => registrarEIr('Serviços', '/servicos')} style={{ width: '220px' }}>Serviços</button>
@@ -100,11 +102,11 @@ function PagSeg() {
               {agendamentos.map(a => (
                 <tr key={a.id}>
                   <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{a.Servico?.nome || '-'}</td>
-                  <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{a.data}</td>
-                  <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{a.hora}</td>
+                  <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{a.data || '-'}</td>
+                  <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{a.hora || '-'}</td>
                   <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
-                    <button onClick={() => handleEditar(a.id)} style={{ marginRight: '8px', background: '#ffd1dc', color: '#C8377C', border: '1px solid #C8377C', borderRadius: '4px', padding: '4px 10px', cursor: 'pointer' }}>Editar</button>
-                    <button onClick={() => handleExcluir(a.id)} style={{ background: '#eee', color: '#C8377C', border: '1px solid #C8377C', borderRadius: '4px', padding: '4px 10px', cursor: 'pointer' }}>Excluir</button>
+                    <button onClick={() => handleEditar(a.id)} className="btn btn-primary btn-sm" style={{ marginRight: '8px' }}>Editar</button>
+                    <button onClick={() => handleExcluir(a.id)} className="btn btn-danger btn-sm">Excluir</button>
                   </td>
                 </tr>
               ))}

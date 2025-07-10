@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../App.css';
 import salaoImg from '../assets/salao-inicio.jpg';
+import { capitalizeName } from '../utils/textUtils';
 
 export default function PageInit() {
   const [email, setEmail] = useState("");
@@ -21,7 +22,7 @@ export default function PageInit() {
         const adminData = await adminResponse.json();
         console.log('Admin login response:', adminResponse.status, adminData); // <-- Debug
         if (adminResponse.ok) {
-          setMensagem("Login admin bem-sucedido! Bem-vindo, " + adminData.nome);
+          setMensagem("Login admin bem-sucedido! Bem-vindo, " + capitalizeName(adminData.nome));
           localStorage.setItem('usuarioLogado', JSON.stringify({ ...adminData, role: 'admin' }));
           setTimeout(() => {
             navigate("/Admin");
@@ -42,7 +43,7 @@ export default function PageInit() {
         const data = await response.json();
         console.log('Cliente login response:', response.status, data); // <-- Debug
         if (response.ok) {
-          setMensagem("Login bem-sucedido! Bem-vindo, " + data.cliente.nome);
+          setMensagem("Login bem-sucedido! Bem-vindo, " + capitalizeName(data.cliente.nome));
           localStorage.setItem('usuarioLogado', JSON.stringify(data.cliente));
           setTimeout(() => {
             navigate("/PagSeg");
@@ -67,16 +68,16 @@ export default function PageInit() {
           <h2 style={{ color: '#C8377C', fontWeight: 'bold', fontSize: '2.3vw', marginBottom: '14px', textTransform: 'uppercase', letterSpacing: '1px' }}>
             AUMENTE SUA PRODUTIVIDADE
           </h2>
-          <p style={{ fontSize: '1.3vw', color: '#333', margin: 0, textTransform: 'none', fontWeight: 500, lineHeight: 1.3 }}>
-            com uma plataforma de agenda automática personalizada.<br />
-            adicione funcionalidades e conte com nosso atendimento para o que precisar.
+          <p style={{ fontSize: '1.3vw', color: '#333', margin: 0, textTransform: 'none', fontWeight: 500, lineHeight: 1.3, justifyContent: 'content-distribution' }}>
+            Com uma plataforma de agenda automática personalizada.<br />
+            Adicione funcionalidades e conte com nosso atendimento para o que precisar.
           </p>
         </div>
       </div>
       <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <div className="pagInit" style={{ width: '100%', maxWidth: '320px', margin: '0 auto', background: '#fff', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: '28px 22px' }}>
+        <div className="pagInit" >
           <h1 style={{ textAlign: 'center', marginBottom: '18px' }}>Login</h1>
-          {mensagem && <p className="mensagem-erro" style={{ textAlign: 'center' }}>{mensagem}</p>}
+          {mensagem && <p className="mensagem-bienvenida" style={{ textAlign: 'center', color: mensagem.includes('bem-sucedido') ? '#6a0dad' : '#d32f2f', fontWeight: '600', fontSize: '1.1rem' }}>{mensagem}</p>}
           <div className='login-container'>
             <div className="input-group">
               <label htmlFor="email">Email:</label>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { capitalizeName } from '../utils/textUtils';
 
 const Cadastro = () => {
     const [mensagem, setMensagem] = useState("");

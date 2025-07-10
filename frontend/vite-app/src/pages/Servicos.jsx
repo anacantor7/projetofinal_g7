@@ -67,7 +67,7 @@ export default function Servicos() {
       )}
       <div className="servicos-container">
         <div className="servico-container">
-          <header className="servico-header">SERVIÇOS</header>
+          <h2 className="servico-header">SERVIÇOS</h2>
           <h2 className="titulo">Conheça nossos serviços e profissionais</h2>
           <div className="botoes-servico" style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem' }}>
             {servicos.map(servico => (

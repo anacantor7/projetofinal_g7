@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { capitalizeName } from '../utils/textUtils';
 
 export default function Agendamento({ onDateSelect = () => {} }) {
   const [selectedDate, setSelectedDate] = useState('');
@@ -266,7 +267,7 @@ export default function Agendamento({ onDateSelect = () => {} }) {
           <label style={{ color: '#C8377C', fontWeight: 'bold', fontSize: '1.1rem' }}>Categoria de Manicure:</label>
           <select value={categoriaManicure} onChange={e => setCategoriaManicure(e.target.value)} style={{ marginLeft: 8, padding: 8, borderRadius: 4 }}>
             <option value="">Selecione...</option>
-            <option value="unas">Unas</option>
+            <option value="unhas">Unhas</option>
             <option value="Manutenção">Manutenção</option>
           </select>
         </div>
@@ -288,7 +289,7 @@ export default function Agendamento({ onDateSelect = () => {} }) {
           <label style={{ color: '#C8377C', fontWeight: 'bold', fontSize: '1.1rem' }}>Escolha o profissional:</label>
           <select value={profissionalSelecionado} onChange={e => setProfissionalSelecionado(e.target.value)} style={{ marginLeft: 8, padding: 8, borderRadius: 4 }}>
             <option value="">Selecione...</option>
-            {profissionais.map(p => <option key={p.id} value={p.id}>{p.nome}</option>)}
+            {profissionais.map(p => <option key={p.id} value={p.id}>{capitalizeName(p.nome)}</option>)}
           </select>
         </div>
       )}
@@ -302,7 +303,7 @@ export default function Agendamento({ onDateSelect = () => {} }) {
           <label style={{ color: '#C8377C', fontWeight: 'bold', fontSize: '1.1rem' }}>Profissionais disponíveis:</label>
           <ul style={{ margin: 0, paddingLeft: 20 }}>
             {profissionais.map(p => (
-              <li key={p.id} style={{ color: '#C8377C', fontWeight: 'normal' }}>{p.nome} ({p.especialidade})</li>
+              <li key={p.id} style={{ color: '#C8377C', fontWeight: 'normal' }}>{capitalizeName(p.nome)} ({p.especialidade})</li>
             ))}
           </ul>
         </div>
@@ -340,7 +341,7 @@ export default function Agendamento({ onDateSelect = () => {} }) {
                 disabled={isDisabled}
               >
                 <span style={{ fontSize: "0.8em", color: selectedDate === formatDate(day) ? "#fff" : isDisabled ? "#888" : "#C8377C" }}>{label}</span>
-                <span>{day}</span>
+                <span style={{ color: "#C8377C", fontWeight: "bold" }}>{day}</span>
               </button>
             );
           })}

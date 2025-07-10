@@ -8,10 +8,13 @@ const Footer = () => {
       background: "linear-gradient(90deg, #fff 60%, #fce4ec 100%)",
       color: "#C8377C",
       textAlign: "center",
-      padding: "24px 0 12px 0",
-      borderTop: "1px solid #eee",
+      padding: "32px 0 28px 0",
       marginTop: "40px",
-      boxShadow: "0 2px 16px 0 #f8bbd0"
+      boxShadow: "0 -2px 16px 0 #f8bbd0",
+      borderTopLeftRadius: "18px",
+      borderTopRightRadius: "18px",
+      position: "relative",
+      zIndex: 10
     }}>
       <div style={{ maxWidth: "900px", margin: "0 auto" }}>
         <div style={{
