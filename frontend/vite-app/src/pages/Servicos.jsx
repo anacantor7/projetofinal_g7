@@ -19,7 +19,7 @@ export default function Servicos() {
     } else {
       navigate('/');
     }
-    // Obtener servicios
+    // Obter serviços
     fetch('http://localhost:3000/servicos')
       .then(res => {
         if (!res.ok) throw new Error('Erro ao buscar serviços');
@@ -27,7 +27,7 @@ export default function Servicos() {
       })
       .then(data => setServicos(data))
       .catch(err => setError(err.message));
-    // Obtener profesionales
+    // Obter profissionais
     fetch('http://localhost:3000/profissionais')
       .then(res => {
         if (!res.ok) throw new Error('Erro ao buscar profissionais');
@@ -35,7 +35,7 @@ export default function Servicos() {
       })
       .then(data => setProfissionais(data))
       .catch(err => setError(err.message));
-    // Obtener horarios disponibles (agendamentos)
+    // Obter horários disponíveis (agendamentos)
     fetch('http://localhost:3000/agendamentos')
       .then(res => {
         if (!res.ok) throw new Error('Erro ao buscar horários');

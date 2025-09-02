@@ -46,7 +46,7 @@ export default function PageInit() {
         console.log('Cliente login response:', response.status, data); // <-- Debug
         if (response.ok) {
           setMensagem("Login bem-sucedido! Bem-vindo, " + capitalizeName(data.cliente.nome));
-          // Guardar token y datos del cliente
+          // Guardar token e dados do cliente
           localStorage.setItem('token', data.token);
           localStorage.setItem('usuarioLogado', JSON.stringify(data.cliente));
           setTimeout(() => {
@@ -65,55 +65,78 @@ export default function PageInit() {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '80vh', alignItems: 'center', justifyContent: 'center', background: '#fff' }}>
-      <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-end' }}>
-        <div style={{ maxWidth: '350px', textAlign: 'right' }}>
-          <img src={salaoImg} alt="Salão" style={{ width: '100%', maxWidth: '260px', borderRadius: '12px', marginBottom: '18px', boxShadow: '0 2px 12px #0001' }} />
-          <h2 style={{ color: '#C8377C', fontWeight: 'bold', fontSize: '2.3vw', marginBottom: '14px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+    <div className="page-container">
+      <div className="content-wrapper">
+        <div className="content-left">
+          <img src={salaoImg} alt="Salão de Beleza" className="hero-image" />
+          <h2 className="hero-title">
             AUMENTE SUA PRODUTIVIDADE
           </h2>
-          <p style={{ fontSize: '1.3vw', color: '#333', margin: 0, textTransform: 'none', fontWeight: 500, lineHeight: 1.3, justifyContent: 'content-distribution' }}>
+          <p className="hero-description">
             Com uma plataforma de agenda automática personalizada.<br />
             Adicione funcionalidades e conte com nosso atendimento para o que precisar.
           </p>
         </div>
-      </div>
-      <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <div className="pagInit" >
-          <h1 style={{ textAlign: 'center', marginBottom: '18px' }}>Login</h1>
-          {mensagem && <p className="mensagem-bienvenida" style={{ textAlign: 'center', color: mensagem.includes('bem-sucedido') ? '#6a0dad' : '#d32f2f', fontWeight: '600', fontSize: '1.1rem' }}>{mensagem}</p>}
-          <div className='login-container'>
-            <div className="input-group">
-              <label htmlFor="email">Email:</label>
-              <input
-                type="email"
-                id="email"
-                className="input-email"
-                placeholder="Digite seu email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="username"
-                required
-                style={{ background: '#fff', border: '1px solid #ccc', borderRadius: '4px', padding: '8px', width: '100%', color: '#d63384' }}
-              />
-            </div>
-            <div className="input-group">
-              <label htmlFor="password">Senha:</label>
-              <input
-                type="password"
-                id="password"
-                placeholder="Digite sua senha"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="current-password"
-                required
-                style={{ background: '#fff', border: '1px solid #ccc', borderRadius: '4px', padding: '8px', width: '100%', color: '#d63384' }}
-              />
-            </div>
-            <button className="login-btn" onClick={handleLogin} style={{ width: '100%' }}>Login</button>
-            <div className="links" style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
-              <Link to="/cadastro">Cadastro</Link>
-              <Link to="/recuperar-senha">Recuperar Senha</Link>
+
+        <div className="content-right">
+          <div className="form-container">
+            <h1 style={{ textAlign: 'center', marginBottom: '2rem', fontSize: '2.2rem' }}>
+              Bem-vindo ao Bellizy
+            </h1>
+
+            {mensagem && (
+              <div className={`message ${mensagem.includes('sucesso') || mensagem.includes('bem-sucedido') ? 'success' : mensagem.includes('Erro') ? 'error' : 'info'}`}>
+                {mensagem}
+              </div>
+            )}
+
+            <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
+              <div className="form-group">
+                <label htmlFor="email" className="form-label">Email:</label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="form-input"
+                  placeholder="Digite seu email"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="password" className="form-label">Senha:</label>
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="form-input"
+                  placeholder="Digite sua senha"
+                />
+              </div>
+
+              <button type="submit" className="form-button">
+                Entrar
+              </button>
+            </form>
+
+            <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+              <p style={{ marginBottom: '0.5rem', color: '#666' }}>
+                Não tem uma conta?
+              </p>
+              <Link
+                to="/cadastro"
+                style={{
+                  color: '#C8377C',
+                  textDecoration: 'none',
+                  fontWeight: '600',
+                  fontSize: '1rem'
+                }}
+              >
+                Criar conta
+              </Link>
             </div>
           </div>
         </div>

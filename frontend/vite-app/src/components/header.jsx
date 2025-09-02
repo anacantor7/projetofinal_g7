@@ -26,12 +26,19 @@ const Header = () => {
           objectFit: 'contain',
           borderRadius: '50%',
           border: '3px solid #C8377C',
-          boxShadow: '0 4px 12px #f8bbd0',
-          transition: 'transform 0.3s',
+          boxShadow: '0 4px 12px rgba(200, 55, 124, 0.3)',
+          transition: 'all 0.3s ease',
           cursor: 'pointer'
         }}
-        onMouseOver={e => (e.currentTarget.style.transform = 'rotate(-10deg) scale(1.08)')}
-        onMouseOut={e => (e.currentTarget.style.transform = 'none')}
+        onMouseOver={(e) => {
+          e.currentTarget.style.transform = 'rotate(-10deg) scale(1.08)';
+          e.currentTarget.style.boxShadow = '0 6px 20px rgba(200, 55, 124, 0.4)';
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.transform = 'none';
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(200, 55, 124, 0.3)';
+        }}
+        onClick={() => window.location.href = '/'}
       />
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
         <h1 style={{ color: '#C8377C', fontWeight: 'bold', fontSize: '2.5rem', margin: 0, letterSpacing: '2px' }}>BELLIZY</h1>
