@@ -22,8 +22,10 @@ export default function PageInit() {
         const adminData = await adminResponse.json();
         console.log('Admin login response:', adminResponse.status, adminData); // <-- Debug
         if (adminResponse.ok) {
-          setMensagem("Login admin bem-sucedido! Bem-vindo, " + capitalizeName(adminData.nome));
-          localStorage.setItem('usuarioLogado', JSON.stringify({ ...adminData, role: 'admin' }));
+          setMensagem("Login admin bem-sucedido! Bem-vindo, " + capitalizeName(adminData.admin.nome));
+          // Guardar token y datos del admin
+          localStorage.setItem('token', adminData.token);
+          localStorage.setItem('usuarioLogado', JSON.stringify({ ...adminData.admin, role: 'admin' }));
           setTimeout(() => {
             navigate("/Admin");
           }, 1000);
@@ -44,6 +46,8 @@ export default function PageInit() {
         console.log('Cliente login response:', response.status, data); // <-- Debug
         if (response.ok) {
           setMensagem("Login bem-sucedido! Bem-vindo, " + capitalizeName(data.cliente.nome));
+          // Guardar token y datos del cliente
+          localStorage.setItem('token', data.token);
           localStorage.setItem('usuarioLogado', JSON.stringify(data.cliente));
           setTimeout(() => {
             navigate("/PagSeg");

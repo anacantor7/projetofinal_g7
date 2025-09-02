@@ -1,5 +1,4 @@
-import react from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { capitalizeName } from '../utils/textUtils';
 
@@ -7,6 +6,7 @@ import { capitalizeName } from '../utils/textUtils';
 
 export default function Feedback() {
   const [feedback, setFeedback] = useState('');
+  const [name, setName] = useState('');
   const navigate = useNavigate();
   const handleVoltar = () => {
     navigate('/PagSeg');
@@ -24,20 +24,18 @@ export default function Feedback() {
           if (!res.ok) throw new Error('Erro ao buscar agendamentos');
           return res.json();
         })
-        .then(data => {
-          setAgendamentos(data);
-          setFetchError(false);
+        .then(() => {
+          // Agendamentos carregados com sucesso
         })
         .catch(() => {
-          setAgendamentos([]);
-          setFetchError(true);
+          // Erro ao carregar agendamentos
         });
     } else {
       // Si no hay usuario logueado, redirigir al login
       navigate('/');
     }
   }, [navigate]);
-  const [name, setName] = useState('');
+
   const handleSubmit = () => {
     if (feedback) {
       console.log(`Feedback submitted: ${feedback}`);

@@ -98,7 +98,6 @@ ensureAdmin();
 
 const PORT = process.env.PORT || 3000;
 console.log("Ambiente:", process.env.NODE_ENV);
-
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });

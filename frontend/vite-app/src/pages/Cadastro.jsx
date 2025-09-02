@@ -1,14 +1,7 @@
 import React, { useState } from "react";
-import { capitalizeName } from '../utils/textUtils';
 
 const Cadastro = () => {
     const [mensagem, setMensagem] = useState("");
-
-
-    const handleBack = () => {
-        // Implementar a lógica para voltar à página anterior ou redirecionar
-        window.location.href = "/login"; // Redireciona para a página de login
-    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -36,7 +29,7 @@ const Cadastro = () => {
                 const erro = await response.json();
                 setMensagem(erro.erro || "Erro ao cadastrar cliente");
             }
-        } catch (error) {
+        } catch {
             setMensagem("Erro de conexão com o servidor");
         }
     };

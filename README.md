@@ -41,7 +41,10 @@ Com ela, é possível cadastrar clientes, serviços, profissionais e agendamento
 ### 🎨 Front-End
 
 - React
-- Figma
+- Vite
+- React Router DOM
+- React Icons
+- ESLint
 
 ---
 
@@ -68,68 +71,301 @@ Com ela, é possível cadastrar clientes, serviços, profissionais e agendamento
 
 ### 🛆 Pré-requisitos
 
-- Node.js instalado
-- Git instalado (opcional)
+- Node.js (versão 16 ou superior)
+- Git
+- npm ou yarn
 
-### 🚀 Passos para rodar
+### 🚀 Passos para instalação e execução
 
-1. Clone o repositório:
+1. **Clone o repositório:**
 
    ```bash
-   git clone https://github.com/anacantor7/projetofinal_g7.git
-   cd projetofinal_g7
+   git clone https://github.com/juansolor/AgendaBeleza.git
+   cd AgendaBeleza
    ```
 
-2. No terminal, acesse a pasta `backend/api-sara`:
+2. **Instale as dependências do backend:**
 
    ```bash
-   cd backend
-   cd api-sara
-   ```
-
-3. Instale as dependências:
-
-   ```bash
+   cd backend/api-sara
    npm install
    ```
 
-4. Inicie o servidor:
+3. **Instale as dependências do frontend:**
 
    ```bash
-   node app.js
+   cd ../../frontend/vite-app
+   npm install
+   cd ../..
    ```
 
-5. A API estará disponível em:
+4. **Configure as variáveis de ambiente:**
+
+   Crie um arquivo `.env` na pasta `backend/api-sara` com:
+   ```env
+   NODE_ENV=development
+   PORT=3000
+   DATABASE_URL=./database.sqlite
+   JWT_SECRET=your-secret-key-here
+   ```
+
+5. **Inicie o backend:**
 
    ```bash
-   http://localhost:3000
+   cd backend/api-sara
+   npm start
+   # ou para desenvolvimento:
+   npm run dev
    ```
 
-6. Use ferramentas como **Postman** ou **Insomnia** para testar os endpoints.
+6. **Inicie o frontend (em outro terminal):**
+
+   ```bash
+   cd frontend/vite-app
+   npm run dev
+   ```
+
+7. **Acesse a aplicação:**
+
+   - Frontend: http://localhost:5173
+   - Backend API: http://localhost:3000
 
 ---
 
-📘 A documentação completa está disponível nos arquivos:
+## � Scripts disponíveis
 
-- [`API.md`](./backend/api-sara/docs/API.md)
-- [`Instruções de Integração Front-End ↔ Back-End`](./backend/api-sara/docs/instrucoes-integracao.md)
+### Backend
+```bash
+npm start          # Inicia o servidor em produção
+npm run dev        # Inicia o servidor em modo desenvolvimento
+npm test           # Executa os testes
+npm run lint       # Executa o linter
+```
+
+### Frontend
+```bash
+npm run dev        # Inicia o servidor de desenvolvimento
+npm run build      # Build para produção
+npm run preview    # Preview do build
+npm run lint       # Executa o linter
+```
 
 ---
 
-## 🔮 Melhorias futuras
+## 🏗️ Estrutura do projeto
 
-As ideias abaixo ainda não foram implementadas, mas podem ser consideradas em versões futuras para tornar o sistema mais completo, seguro e escalável:
+```
+AgendaBeleza/
+├── backend/
+│   └── api-sara/
+│       ├── controllers/     # Controladores da API
+│       ├── models/         # Modelos do Sequelize
+│       ├── routes/         # Definições das rotas
+│       ├── database/       # Configuração do banco
+│       ├── docs/          # Documentação da API
+│       └── app.js         # Arquivo principal
+├── frontend/
+│   └── vite-app/
+│       ├── public/        # Assets estáticos
+│       ├── src/
+│       │   ├── components/ # Componentes React
+│       │   ├── pages/     # Páginas da aplicação
+│       │   ├── utils/     # Utilitários
+│       │   └── App.jsx    # Componente principal
+│       └── package.json
+└── README.md
+```
 
-- 🔐 Adicionar autenticação e login para proteger o acesso ao sistema e permitir que apenas usuários autorizados realizem alterações (visual já esboçado no Figma)
-- 📩 Enviar confirmações de agendamento por e-mail
-- 🧪 Implementar testes automatizados com Jest no back-end, garantindo maior estabilidade
-- 📆 Criar painel individual para que cada profissional visualize seus próprios agendamentos conforme sua especialidade
-- ⏰ Impedir agendamentos sobrepostos com base na duração dos serviços, garantindo que o(a) profissional esteja disponível durante todo o período da execução
-- 🕒 Impedir agendamentos com datas passadas
-- 📅 Bloquear dias não úteis e feriados para novos agendamentos
-- 🗃️ Migrar de SQLite para um banco de dados relacional com armazenamento persistente (como PostgreSQL), garantindo que os dados não sejam perdidos após reinicializações no ambiente de produção.
-- 💼 Adicionar sistema de gestão financeira para os profissionais do salão, com:
-  - Registro de salários, bônus, descontos e comissões, com base em critérios como número de atendimentos e frequência de trabalho (presenças e ausências)
-  - Reconhecimento mensal de desempenho (ex: prêmio para o profissional destaque do mês)
-- 💳 Integração com sistema de pagamentos (ex: Pix, cartão) para serviços pagos online
-- 🔧 Reestruturar a API para seguir padrões REST de forma mais clara, com autenticação via JWT e organização modular (controllers, services, middlewares), visando maior segurança e escalabilidade do sistema
+---
+
+## 🔧 Melhorias implementadas
+
+### ✅ Segurança
+- [x] Hashing de senhas com bcrypt
+- [x] Autenticação JWT
+- [x] Middleware de autenticação
+- [x] Validação de entrada
+
+### ✅ Qualidade de código
+- [x] Correção de erros de linting (32 erros encontrados)
+- [ ] Padronização de linguagem (Português)
+- [x] **Refatoração do componente Admin (871 linhas → componentes menores)** ✅
+- [x] Correção de dependências em useEffect
+
+### ✅ Arquitetura
+- [x] Migração para PostgreSQL
+- [x] Separação em camadas (controllers, services, middlewares)
+- [x] Configuração com variáveis de ambiente
+- [x] Sistema de logs estruturado
+- [x] **Refatoração do componente Admin (871 linhas → componentes menores)** ✅
+
+### ✅ Performance
+- [ ] Implementação de cache
+- [ ] Paginación en endpoints
+- [ ] Compresión gzip
+- [ ] Optimización de imágenes
+
+### ✅ Testing
+- [ ] Tests unitários com Jest
+- [ ] Tests de integração
+- [ ] Cobertura de código >70%
+- [ ] CI/CD com GitHub Actions
+
+---
+
+## 🔄 Refatoração do Componente Admin
+
+### 📊 Antes da Refatoração
+- **Arquivo único:** `Admin.jsx` com 871 linhas
+- **Problemas identificados:**
+  - Violação do princípio da responsabilidade única
+  - Dificuldade de manutenção e debug
+  - Código duplicado
+  - Estado complexo e difícil de gerenciar
+  - Múltiplas responsabilidades em um só componente
+
+### ✅ Após a Refatoração
+- **Componente principal:** `AdminDashboard.jsx` (37 linhas)
+- **Componentes especializados criados:**
+  - `AdminHeader.jsx` - Header com informações do usuário e logout
+  - `UserManagement.jsx` - Gestão completa de usuários/clientes
+  - `EmployeeManagement.jsx` - Gestão completa de funcionários
+  - `ServiceManagement.jsx` - Gestão completa de serviços
+  - `ScheduleManagement.jsx` - Gestão completa de horários
+  - `SubcategoryManagement.jsx` - Gestão completa de subcategorias
+  - `ActivityLogs.jsx` - Visualização de logs de atividade
+
+- **Hooks personalizados criados:**
+  - `useUsers.js` - Lógica para gestão de usuários
+  - `useEmployees.js` - Lógica para gestão de funcionários
+  - `useServices.js` - Lógica para gestão de serviços
+  - `useSchedules.js` - Lógica para gestão de horários
+  - `useTypesAndSubcategories.js` - Lógica para tipos e subcategorias
+  - `useLogs.js` - Lógica para logs de atividade
+
+### 🎯 Benefícios da Refatoração
+- **Manutenibilidade:** Código mais fácil de entender e modificar
+- **Reutilização:** Componentes podem ser reutilizados em outras partes da aplicação
+- **Testabilidade:** Componentes menores são mais fáceis de testar
+- **Performance:** Melhor controle de re-renderização com hooks especializados
+- **Escalabilidade:** Fácil adicionar novas funcionalidades sem afetar outras partes
+- **Separação de responsabilidades:** Cada componente tem uma única responsabilidade
+
+---
+
+## 🎯 Roadmap de melhorias
+
+### 🔴 Prioridade Alta
+- [x] Implementar autenticação JWT ✅
+- [x] Corrigir todos os erros de linting ✅
+- [x] **Refatorar componente Admin** ✅
+- [ ] Adicionar validações de entrada
+
+### 🟡 Prioridade Média
+- [ ] Migrar para PostgreSQL
+- [ ] Implementar testes automatizados
+- [ ] Adicionar sistema de logs
+- [ ] Melhorar responsividade mobile
+
+### 🟢 Prioridade Baixa
+- [ ] Implementar notificações por email
+- [ ] Sistema de pagamentos
+- [ ] Gestão financeira
+- [ ] Painel individual para profissionais
+
+---
+
+## 🤝 Como contribuir
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/nome-da-feature`)
+3. Commit suas mudanças (`git commit -m 'Adiciona nova feature'`)
+4. Push para a branch (`git push origin feature/nome-da-feature`)
+5. Abra um Pull Request
+
+### 📝 Padrões de código
+
+- Use ESLint para manter a qualidade do código
+- Siga as convenções de nomenclatura em português
+- Documente funções importantes com JSDoc
+- Mantenha commits pequenos e descritivos
+
+---
+
+## 🐛 Issues conhecidos
+
+- [ ] 32 erros de linting no frontend
+- [ ] Senhas armazenadas em texto plano
+- [ ] Falta autenticação em rotas sensíveis
+- [ ] Componente Admin muito grande
+- [ ] Dependências faltantes em useEffect
+- [ ] Linguagens misturadas no código
+
+---
+
+## 📘 Documentação
+
+- [API Documentation](./backend/api-sara/docs/API.md)
+- [Frontend-Backend Integration](./backend/api-sara/docs/instrucoes-integracao.md)
+
+---
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
+
+---
+
+## 🎯 **Mejora #2 COMPLETADA: Autenticación JWT**
+
+### ✅ **Funcionalidades implementadas:**
+
+#### 🔐 **Backend - Seguridad**
+- ✅ **Hashing de contraseñas** con bcrypt (10 salt rounds)
+- ✅ **Autenticación JWT** con tokens de 24 horas
+- ✅ **Middleware de autenticación** (`authenticateToken`, `authenticateAdmin`)
+- ✅ **Verificación de contraseñas** con `checkPassword()`
+- ✅ **Protección de rutas** admin con middleware
+- ✅ **Migración de contraseñas** existentes (soporte backward compatibility)
+- ✅ **Exclusión de contraseñas** en respuestas JSON
+
+#### 🔧 **Backend - Endpoints**
+- ✅ `POST /clientes/login` - Login de clientes con JWT
+- ✅ `POST /admin-auth/login` - Login de admins con JWT
+- ✅ `GET /clientes/profile/me` - Perfil protegido (endpoint de prueba)
+- ✅ Rutas admin protegidas con `authenticateAdmin`
+
+#### 🎨 **Frontend - Utilidades**
+- ✅ **Utilidad `apiRequest`** para requests autenticados
+- ✅ **Gestión de tokens** en localStorage
+- ✅ **Función `logout`** para cerrar sesión
+- ✅ **Verificación de autenticación** con `isAuthenticated()`
+- ✅ **Auto-redirección** en caso de token expirado/inválido
+
+#### 🔄 **Frontend - Actualizaciones**
+- ✅ **Página de login** actualizada para guardar tokens
+- ✅ **Compatibilidad** con respuestas JWT del backend
+- ✅ **Manejo de errores** de autenticación
+
+### 🧪 **Testing realizado:**
+- ✅ Login de cliente exitoso con retorno de token
+- ✅ Login de admin exitoso con retorno de token
+- ✅ Servidor funcionando correctamente
+- ✅ Base de datos sincronizada
+- ✅ Middleware de autenticación operativo
+
+### 🔑 **Credenciales de prueba:**
+- **Admin:** `admin@salao.com` / `admin123`
+- **Cliente:** `maria@mail.com` / `123`
+
+### 📋 **Próximos pasos recomendados:**
+1. **Refactorizar componente Admin** (871 líneas → componentes más pequeños)
+2. **Implementar tests automatizados** con Jest
+3. **Migrar a PostgreSQL** para producción
+4. **Agregar validación de entrada** más robusta
+
+---
+
+## 📞 Suporte
+
+Para dúvidas ou sugestões, abra uma issue no GitHub ou entre em contato com a equipe de desenvolvimento.
