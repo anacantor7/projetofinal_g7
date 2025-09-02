@@ -321,13 +321,13 @@ Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalh
 ### ✅ **Funcionalidades implementadas:**
 
 #### 🔐 **Backend - Seguridad**
-- ✅ **Hashing de contraseñas** con bcrypt (10 salt rounds)
-- ✅ **Autenticación JWT** con tokens de 24 horas
-- ✅ **Middleware de autenticación** (`authenticateToken`, `authenticateAdmin`)
-- ✅ **Verificación de contraseñas** con `checkPassword()`
-- ✅ **Protección de rutas** admin con middleware
-- ✅ **Migración de contraseñas** existentes (soporte backward compatibility)
-- ✅ **Exclusión de contraseñas** en respuestas JSON
+- ✅ **Hashing de senhas** com bcrypt (10 salt rounds)
+- ✅ **Autenticação JWT** com tokens de 24 horas
+- ✅ **Middleware de autenticação** (`authenticateToken`, `authenticateAdmin`)
+- ✅ **Verificação de senhas** com `checkPassword()`
+- ✅ **Proteção de rotas** admin com middleware
+- ✅ **Migração de senhas** existentes (suporte backward compatibility)
+- ✅ **Exclusão de senhas** em respostas JSON
 
 #### 🔧 **Backend - Endpoints**
 - ✅ `POST /clientes/login` - Login de clientes con JWT
@@ -339,13 +339,13 @@ Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalh
 - ✅ **Utilidad `apiRequest`** para requests autenticados
 - ✅ **Gestión de tokens** en localStorage
 - ✅ **Función `logout`** para cerrar sesión
-- ✅ **Verificación de autenticación** con `isAuthenticated()`
-- ✅ **Auto-redirección** en caso de token expirado/inválido
+- ✅ **Verificação de autenticação** com `isAuthenticated()`
+- ✅ **Auto-redirecionamento** em caso de token expirado/inválido
 
-#### 🔄 **Frontend - Actualizaciones**
-- ✅ **Página de login** actualizada para guardar tokens
-- ✅ **Compatibilidad** con respuestas JWT del backend
-- ✅ **Manejo de errores** de autenticación
+#### 🔄 **Frontend - Atualizações**
+- ✅ **Página de login** atualizada para salvar tokens
+- ✅ **Compatibilidade** com respostas JWT do backend
+- ✅ **Tratamento de erros** de autenticação
 
 ### 🧪 **Testing realizado:**
 - ✅ Login de cliente exitoso con retorno de token

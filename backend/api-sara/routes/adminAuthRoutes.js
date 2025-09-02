@@ -23,19 +23,19 @@ router.post('/login', async (req, res) => {
     }
 
     console.log('Admin encontrado:', admin.email);
-    console.log('Contraseña en BD (primeros 10 chars):', admin.senha.substring(0, 10) + '...');
+    console.log('Senha em BD (primeiros 10 chars):', admin.senha.substring(0, 10) + '...');
 
     // Verificar contraseña - comparación directa temporal para debug
     let senhaValida = false;
     if (admin.senha === senha) {
       senhaValida = true;
-      console.log('Contraseña verificada directamente (sin hash)');
+      console.log('Senha verificada diretamente (sem hash)');
     } else {
-      console.log('Contraseña no coincide. Esperado:', senha, 'Encontrado:', admin.senha);
+      console.log('Senha não coincide. Esperado:', senha, 'Encontrado:', admin.senha);
     }
 
     if (!senhaValida) {
-      console.log('Contraseña inválida para admin:', admin.email);
+      console.log('Senha inválida para admin:', admin.email);
       return res.status(401).json({ error: 'Credenciais inválidas' });
     }
 

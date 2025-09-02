@@ -86,7 +86,7 @@ async function ensureAdmin() {
       defaults: {
         nome: 'Administrador',
         email: 'admin@salao.com',
-        senha: 'Admin123!', // Cambia esta senha después de crear el admin
+        senha: 'Admin123!', // Mude esta senha após criar o admin
         ativo: true,
       },
     });

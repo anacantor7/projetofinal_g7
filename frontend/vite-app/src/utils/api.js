@@ -18,7 +18,7 @@ export const apiRequest = async (url, options = {}) => {
 
   const response = await fetch(url, { ...defaultOptions, ...options });
 
-  // Si el token es inválido o expiró, redirigir al login
+  // Se o token for inválido ou expirou, redirecionar para o login
   if (response.status === 401 || response.status === 403) {
     localStorage.removeItem('token');
     localStorage.removeItem('usuarioLogado');
@@ -29,14 +29,14 @@ export const apiRequest = async (url, options = {}) => {
   return response;
 };
 
-// Função para verificar se el usuario está autenticado
+// Função para verificar se o usuário está autenticado
 export const isAuthenticated = () => {
   const token = localStorage.getItem('token');
   const user = localStorage.getItem('usuarioLogado');
   return !!(token && user);
 };
 
-// Função para obtener datos del usuario autenticado
+// Função para obter dados do usuário autenticado
 export const getCurrentUser = () => {
   const user = localStorage.getItem('usuarioLogado');
   return user ? JSON.parse(user) : null;

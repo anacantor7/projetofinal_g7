@@ -47,7 +47,7 @@ async function criarCliente(req, res) {
   const { nome, telefone, email, senha } = req.body;
 
   try {
-    // Verificar si ya existe un cliente con el mismo email
+    // Verificar se já existe um cliente com o mesmo email
     const clienteExistente = await Cliente.findOne({
       where: { email },
     });
@@ -58,7 +58,7 @@ async function criarCliente(req, res) {
       });
     }
 
-    // Crear el cliente si no existe
+    // Criar o cliente se não existir
     const novoCliente = await Cliente.create({ nome, telefone, email, senha });
 
     res.status(201).json(novoCliente);
@@ -81,22 +81,22 @@ async function loginCliente(req, res) {
     if (!email || !senha) {
       return res.status(400).json({ erro: "Email e senha são obrigatórios." });
     }
-    // Buscar cliente incluyendo la contraseña (ignorar defaultScope)
+    // Buscar cliente incluindo a senha (ignorar defaultScope)
     const cliente = await Cliente.findOne({
       where: { email, ativo: true },
-      attributes: { include: ['senha'] } // Forzar incluir contraseña
+      attributes: { include: ['senha'] } // Forçar incluir senha
     });
     if (!cliente) {
       return res.status(401).json({ erro: "Email ou senha inválidos." });
     }
 
-    // Verificar contraseña - comparación directa temporal para debug
+    // Verificar senha - comparação direta temporária para debug
     let senhaValida = false;
     if (cliente.senha === senha) {
       senhaValida = true;
-      console.log('Contraseña de cliente verificada directamente (sin hash)');
+      console.log('Senha de cliente verificada diretamente (sem hash)');
     } else {
-      console.log('Contraseña de cliente no coincide. Esperado:', senha, 'Encontrado:', cliente.senha);
+      console.log('Senha de cliente não coincide. Esperado:', senha, 'Encontrado:', cliente.senha);
     }
 
     if (!senhaValida) {

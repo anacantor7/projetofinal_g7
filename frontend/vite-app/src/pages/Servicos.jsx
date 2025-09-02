@@ -11,7 +11,7 @@ export default function Servicos() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Obtener usuario logueado
+    // Obter usuário logado
     const usuario = localStorage.getItem('usuarioLogado');
     if (usuario) {
       const userData = JSON.parse(usuario);
