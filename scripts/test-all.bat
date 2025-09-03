@@ -1,5 +1,5 @@
 @echo off
-REM scripts/test-all.bat - Script para executar todos os testes no Windows
+REM scripts/test-all.bat - Script para executar todechoecho Backend:  cd backend\api && npm run test:coverageBackend:  cd backend\api && npm tests os testes no Windows
 
 echo 🧪 Executando todos os testes do AgendaBeleza...
 echo ================================================
@@ -7,9 +7,9 @@ echo ================================================
 echo 📋 Verificando dependências...
 
 REM Verificar se as dependências estão instaladas
-if not exist "backend\api-sara\node_modules" (
+if not exist "backend\api\node_modules" (
     echo ❌ Dependências do backend não encontradas. Instalando...
-    cd backend\api-sara
+    cd backend\api
     call npm install
     cd ..\..
 )
@@ -27,7 +27,7 @@ REM Executar testes do backend
 echo.
 echo 🔙 Executando testes do Backend (Jest + Supertest)...
 echo ==============================================
-cd backend\api-sara
+cd backend\api
 call npm test
 set BACKEND_RESULT=%ERRORLEVEL%
 cd ..\..
