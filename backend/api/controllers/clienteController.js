@@ -47,7 +47,7 @@ async function criarCliente(req, res) {
   const { nome, telefone, email, senha } = req.body;
 
   try {
-    // Verificar si ya existe un cliente con el mismo email
+    // Verificar se já existe um cliente com o mesmo email
     const clienteExistente = await Cliente.findOne({
       where: { email },
     });
@@ -58,7 +58,7 @@ async function criarCliente(req, res) {
       });
     }
 
-    // Crear el cliente si no existe
+    // Criar o cliente se não existir
     const novoCliente = await Cliente.create({ nome, telefone, email, senha });
 
     res.status(201).json(novoCliente);
@@ -73,19 +73,51 @@ async function criarCliente(req, res) {
 }
 
 // POST /clientes/login
+const jwt = require('jsonwebtoken');
+
 async function loginCliente(req, res) {
   const { email, senha } = req.body;
   try {
     if (!email || !senha) {
       return res.status(400).json({ erro: "Email e senha são obrigatórios." });
     }
-    const cliente = await Cliente.findOne({ where: { email } });
-    if (!cliente || cliente.senha !== senha) {
+    // Buscar cliente incluindo a senha (ignorar defaultScope)
+    const cliente = await Cliente.findOne({
+      where: { email, ativo: true },
+      attributes: { include: ['senha'] } // Forçar incluir senha
+    });
+    if (!cliente) {
       return res.status(401).json({ erro: "Email ou senha inválidos." });
     }
+
+    // Verificar senha usando bcrypt
+    const bcrypt = require('bcrypt');
+    const senhaValida = await bcrypt.compare(senha, cliente.senha);
+
+    if (!senhaValida) {
+      return res.status(401).json({ erro: "Email ou senha inválidos." });
+    }
+
+    // Generar token JWT
+    const token = jwt.sign(
+      {
+        id: cliente.id,
+        email: cliente.email,
+        nome: cliente.nome,
+        role: 'cliente'
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
     res.status(200).json({
       mensagem: "Login bem-sucedido",
-      cliente: { id: cliente.id, nome: cliente.nome, email: cliente.email },
+      token: token,
+      cliente: {
+        id: cliente.id,
+        nome: cliente.nome,
+        email: cliente.email
+      },
     });
   } catch (error) {
     res.status(500).json({ erro: "Erro ao realizar login" });

@@ -51,7 +51,7 @@ function PagSeg() {
         body: JSON.stringify({ usuario: name, acao })
       });
       navigate(ruta);
-    } catch (error) {
+    } catch {
       alert('Erro ao registrar ação.');
     }
   };

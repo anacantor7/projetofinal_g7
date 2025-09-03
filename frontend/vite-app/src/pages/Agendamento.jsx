@@ -148,7 +148,7 @@ export default function Agendamento({ onDateSelect = () => {} }) {
     } else {
       setHorariosDisponiveis([]);
     }
-  }, [selectedDate, servicoSelecionado, profissionalSelecionado]);
+  }, [selectedDate, servicoSelecionado, profissionalSelecionado, profissionais]);
 
   const handleDayClick = (day) => {
     const dateStr = formatDate(day);
@@ -234,7 +234,7 @@ export default function Agendamento({ onDateSelect = () => {} }) {
         const erro = await response.json();
         alert(erro.erro || 'Erro ao confirmar agendamento');
       }
-    } catch (error) {
+    } catch {
       alert('Erro de conexão com o servidor');
     }
   };

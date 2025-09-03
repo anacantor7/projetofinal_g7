@@ -1,6 +1,5 @@
 import './App.css';
-import Header from './components/header'
-import Footer from './components/footer'
+import Layout from './components/Layout'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import PageInit from './pages/pagInit'
 import Cadastro from './pages/Cadastro'
@@ -17,12 +16,12 @@ function AdminRoute({ children }) {
   if (usuario && usuario.role === 'admin') {
     return children;
   } else {
-    return <h1>Acceso denegado</h1>;
+    return <h1>Acesso negado</h1>;
   }
 }
 
 export default function App() {
-  // Redirigir automáticamente a /admin si el usuario es admin
+  // Redirecionar automaticamente para /admin se o usuario for admin
   useEffect(() => {
     const usuario = JSON.parse(localStorage.getItem('usuarioLogado'));
     if (usuario && usuario.role === 'admin' && window.location.pathname !== '/admin') {
@@ -32,24 +31,24 @@ export default function App() {
 
   return (
     <Router>
-      <Header />
-      <Routes>
-        <Route path="/" element={<PageInit />} />
-        <Route path="/cadastro" element={<Cadastro />} />
-        <Route path="/recuperar-senha" element={<RecuperarSenha />} />
-        <Route path="/pagseg" element={<PagSeg />} />
-        <Route path="/Agendamento" element={<Agendamentos />} />
-        <Route path="/servicos" element={<Servicos />} />
-        <Route path="/feedback" element={<Feedback />} />
-        <Route path="/admin" element={
-          <AdminRoute>
-            <Admin />
-          </AdminRoute>
-        } />
-        {/* Add more routes as needed */}
-        <Route path="*" element={<h1>404 - Página não encontrada</h1>} />
-      </Routes>
-      <Footer />
+      <Layout>
+        <Routes>
+          <Route path="/" element={<PageInit />} />
+          <Route path="/cadastro" element={<Cadastro />} />
+          <Route path="/recuperar-senha" element={<RecuperarSenha />} />
+          <Route path="/pagseg" element={<PagSeg />} />
+          <Route path="/Agendamento" element={<Agendamentos />} />
+          <Route path="/servicos" element={<Servicos />} />
+          <Route path="/feedback" element={<Feedback />} />
+          <Route path="/admin" element={
+            <AdminRoute>
+              <Admin />
+            </AdminRoute>
+          } />
+          {/* Adicionar mais rotas conforme necessário */}
+          <Route path="*" element={<h1>404 - Página não encontrada</h1>} />
+        </Routes>
+      </Layout>
     </Router>
   );
 }

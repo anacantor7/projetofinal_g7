@@ -7,19 +7,11 @@ export default function Servicos() {
   const [servicos, setServicos] = useState([]);
   const [profissionais, setProfissionais] = useState([]);
   const [horarios, setHorarios] = useState([]);
-  const [servicoSelecionado, setServicoSelecionado] = useState(null);
-  const [profissionalSelecionado, setProfissionalSelecionado] = useState(null);
-  const [horarioSelecionado, setHorarioSelecionado] = useState(null);
-  const [diaSelecionado, setDiaSelecionado] = useState(null);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const horarioTrabalho = [
-    "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"
-  ];
-
   useEffect(() => {
-    // Obtener usuario logueado
+    // Obter usuário logado
     const usuario = localStorage.getItem('usuarioLogado');
     if (usuario) {
       const userData = JSON.parse(usuario);
@@ -27,7 +19,7 @@ export default function Servicos() {
     } else {
       navigate('/');
     }
-    // Obtener servicios
+    // Obter serviços
     fetch('http://localhost:3000/servicos')
       .then(res => {
         if (!res.ok) throw new Error('Erro ao buscar serviços');
@@ -35,7 +27,7 @@ export default function Servicos() {
       })
       .then(data => setServicos(data))
       .catch(err => setError(err.message));
-    // Obtener profesionales
+    // Obter profissionais
     fetch('http://localhost:3000/profissionais')
       .then(res => {
         if (!res.ok) throw new Error('Erro ao buscar profissionais');
@@ -43,7 +35,7 @@ export default function Servicos() {
       })
       .then(data => setProfissionais(data))
       .catch(err => setError(err.message));
-    // Obtener horarios disponibles (agendamentos)
+    // Obter horários disponíveis (agendamentos)
     fetch('http://localhost:3000/agendamentos')
       .then(res => {
         if (!res.ok) throw new Error('Erro ao buscar horários');
