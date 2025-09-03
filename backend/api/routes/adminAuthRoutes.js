@@ -23,16 +23,10 @@ router.post('/login', async (req, res) => {
     }
 
     console.log('Admin encontrado:', admin.email);
-    console.log('Senha em BD (primeiros 10 chars):', admin.senha.substring(0, 10) + '...');
 
-    // Verificar contraseña - comparación directa temporal para debug
-    let senhaValida = false;
-    if (admin.senha === senha) {
-      senhaValida = true;
-      console.log('Senha verificada diretamente (sem hash)');
-    } else {
-      console.log('Senha não coincide. Esperado:', senha, 'Encontrado:', admin.senha);
-    }
+    // Verificar contraseña usando bcrypt
+    const bcrypt = require('bcrypt');
+    const senhaValida = await bcrypt.compare(senha, admin.senha);
 
     if (!senhaValida) {
       console.log('Senha inválida para admin:', admin.email);

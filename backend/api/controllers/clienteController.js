@@ -90,14 +90,9 @@ async function loginCliente(req, res) {
       return res.status(401).json({ erro: "Email ou senha inválidos." });
     }
 
-    // Verificar senha - comparação direta temporária para debug
-    let senhaValida = false;
-    if (cliente.senha === senha) {
-      senhaValida = true;
-      console.log('Senha de cliente verificada diretamente (sem hash)');
-    } else {
-      console.log('Senha de cliente não coincide. Esperado:', senha, 'Encontrado:', cliente.senha);
-    }
+    // Verificar senha usando bcrypt
+    const bcrypt = require('bcrypt');
+    const senhaValida = await bcrypt.compare(senha, cliente.senha);
 
     if (!senhaValida) {
       return res.status(401).json({ erro: "Email ou senha inválidos." });

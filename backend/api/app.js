@@ -5,6 +5,14 @@ const express = require("express");
 const cors = require("cors");
 const { authenticateToken, authenticateAdmin } = require("./middlewares/auth");
 
+// Middlewares de segurança
+const { 
+  generalLimiter, 
+  helmetConfig, 
+  sanitizeInput, 
+  securityLogger 
+} = require('./middlewares/security');
+
 const agendamentoRoutes = require("./routes/agendamentoRoutes");
 const servicoRoutes = require("./routes/servicoRoutes");
 const clienteRoutes = require("./routes/clienteRoutes");
@@ -61,10 +69,18 @@ sequelize
     console.error("Erro ao sincronizar o banco de dados:", err);
   });
 
+// Aplicar middlewares de segurança
+app.use(helmetConfig);
+app.use(securityLogger);
+app.use(generalLimiter);
+app.use(sanitizeInput);
+
 app.use(cors({
-  origin: "http://localhost:5173"
+  origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+  credentials: true
 }));
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 app.use("/clientes", clienteRoutes);
 app.use("/servicos", servicoRoutes);
@@ -99,6 +115,11 @@ ensureAdmin();
 const PORT = process.env.PORT || 3000;
 console.log("Ambiente:", process.env.NODE_ENV);
 
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+// Só inicia o servidor se não estiver em ambiente de teste
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+  });
+}
+
+module.exports = app;
