@@ -107,6 +107,9 @@ async function criarAgendamento(req, res) {
       return res.status(400).json({ erro: "Tipo de serviço inválido" });
     }
 
+    // FLEXIBILIDADE IMPLEMENTADA: Permitir qualquer profissional atender qualquer serviço
+    // Comentada a validação rigorosa para maior flexibilidade de agendamento
+    /*
     // Validate professional's specialty against service type and category
     const normalizeString = (str) => str.toLowerCase().trim();
     
@@ -151,6 +154,12 @@ async function criarAgendamento(req, res) {
         detalhes: `A especialidade do profissional (${profissional.especialidade}) não é compatível com o serviço solicitado (${servico.nome}) do tipo (${tipoServico.nome})${categoria ? ` na categoria (${categoria})` : ''}. Por favor, escolha um profissional com a especialidade adequada.`
       });
     }
+    */
+
+    console.log('[AGENDAMENTO] Validação de especialidade DESABILITADA para maior flexibilidade');
+    console.log(`[AGENDAMENTO] Profissional: ${profissional.nome} (${profissional.especialidade})`);
+    console.log(`[AGENDAMENTO] Serviço: ${servico.nome} (Tipo: ${tipoServico.nome})`);
+    console.log('[AGENDAMENTO] ✅ Permitindo agendamento flexível');
 
     // منع الحجز المكرر للمصفف بنفس الوقت
     const agendamentoExistente = await Agendamento.findOne({

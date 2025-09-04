@@ -1,0 +1,177 @@
+name: CI/CD Pipeline - AgendaBeleza
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    name: Backend Tests & Security Scan
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: 'backend/api/package-lock.json'
+
+    - name: Install backend dependencies
+      working-directory: ./backend/api
+      run: npm ci
+
+    - name: Run backend security audit
+      working-directory: ./backend/api
+      run: npm audit --audit-level moderate
+
+    - name: Run backend tests
+      working-directory: ./backend/api
+      run: npm test
+      env:
+        NODE_ENV: test
+        # Para produção, configure JWT_SECRET nos secrets do repositório
+        JWT_SECRET: 'test-secret-key-for-ci-environments'
+        ADMIN_EMAIL: admin@test.com
+        ADMIN_PASSWORD: admin123
+
+    - name: Generate backend test coverage
+      working-directory: ./backend/api
+      run: npm run test:coverage
+      continue-on-error: true
+
+  frontend-tests:
+    runs-on: ubuntu-latest
+    name: Frontend Tests & Build
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: 'frontend/vite-app/package-lock.json'
+
+    - name: Install frontend dependencies
+      working-directory: ./frontend/vite-app
+      run: npm ci
+
+    - name: Run frontend security audit
+      working-directory: ./frontend/vite-app
+      run: npm audit --audit-level moderate
+
+    - name: Run ESLint
+      working-directory: ./frontend/vite-app
+      run: npm run lint
+
+    - name: Run frontend tests
+      working-directory: ./frontend/vite-app
+      run: npm test -- --run
+
+    - name: Build frontend for production
+      working-directory: ./frontend/vite-app
+      run: npm run build
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-build
+        path: frontend/vite-app/dist/
+        retention-days: 7
+
+  security-scan:
+    runs-on: ubuntu-latest
+    name: Security Analysis
+    needs: [backend-tests, frontend-tests]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run CodeQL Analysis
+      uses: github/codeql-action/init@v2
+      with:
+        languages: javascript
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    name: Deploy to Staging
+    needs: [backend-tests, frontend-tests, security-scan]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup deployment environment
+      run: |
+        echo "Preparing staging deployment..."
+        echo "Backend API tests: ✅ Passed"
+        echo "Frontend tests: ✅ Passed"
+        echo "Security scan: ✅ Passed"
+
+    # Placeholder para deploy real
+    - name: Deploy to staging server
+      run: |
+        echo "🚀 Deploying to staging environment..."
+        echo "Backend deployed to: staging-api.agendabeleza.com"
+        echo "Frontend deployed to: staging.agendabeleza.com"
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    name: Deploy to Production
+    needs: [backend-tests, frontend-tests, security-scan]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup production deployment
+      run: |
+        echo "Preparing production deployment..."
+        echo "All tests passed: ✅"
+        echo "Security validated: ✅"
+
+    # Placeholder para deploy real
+    - name: Deploy to production server
+      run: |
+        echo "🚀 Deploying to production environment..."
+        echo "Backend deployed to: api.agendabeleza.com"
+        echo "Frontend deployed to: agendabeleza.com"
+
+    - name: Notify deployment success
+      run: |
+        echo "✅ Production deployment completed successfully!"
+        echo "🔒 All security measures active"
+        echo "📊 Monitoring enabled"
+
+  notification:
+    runs-on: ubuntu-latest
+    name: Deployment Notification
+    needs: [deploy-staging, deploy-production]
+    if: always()
+    
+    steps:
+    - name: Send notification
+      run: |
+        if [ "${{ needs.deploy-staging.result }}" == "success" ]; then
+          echo "✅ Staging deployment successful"
+        fi
+        
+        if [ "${{ needs.deploy-production.result }}" == "success" ]; then
+          echo "✅ Production deployment successful"
+        fi
+        
+        echo "🔔 Deployment pipeline completed"

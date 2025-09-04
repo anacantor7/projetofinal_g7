@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpiar LocalStorage - AgendaBeleza</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+        }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        button {
+            background: #C8377C;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #a02861;
+            transform: translateY(-2px);
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success {
+            background: rgba(76, 175, 80, 0.3);
+            border: 2px solid #4caf50;
+        }
+        .warning {
+            background: rgba(255, 193, 7, 0.3);
+            border: 2px solid #ffc107;
+        }
+        .info {
+            background: rgba(33, 150, 243, 0.3);
+            border: 2px solid #2196f3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Limpiar LocalStorage</h1>
+        <p>Esta herramienta limpiará los datos de usuario guardados y forzará un nuevo login.</p>
+        
+        <div id="status" class="status info">
+            ℹ️ Verificando estado actual del localStorage...
+        </div>
+        
+        <button onclick="verificarUsuario()">🔍 Verificar Usuario Actual</button>
+        <button onclick="limpiarLocalStorage()">🗑️ Limpiar LocalStorage</button>
+        <button onclick="irALogin()">🚀 Ir a Login</button>
+        
+        <div id="instrucciones" style="margin-top: 30px; text-align: left;">
+            <h3>📋 Instrucciones:</h3>
+            <ol>
+                <li>Haz clic en "Verificar Usuario Actual" para ver quién está logueado</li>
+                <li>Haz clic en "Limpiar LocalStorage" para eliminar los datos</li>
+                <li>Haz clic en "Ir a Login" para volver a la página de login</li>
+                <li>Inicia sesión con Pedro Ojeda (juan@mail.com)</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function verificarUsuario() {
+            const statusDiv = document.getElementById('status');
+            const usuarioLogado = localStorage.getItem('usuarioLogado');
+            
+            if (usuarioLogado) {
+                try {
+                    const userData = JSON.parse(usuarioLogado);
+                    statusDiv.className = 'status info';
+                    statusDiv.innerHTML = `
+                        ℹ️ <strong>Usuario actual:</strong><br>
+                        ID: ${userData.id}<br>
+                        Nome: ${userData.nome}<br>
+                        Email: ${userData.email}
+                    `;
+                    
+                    if (userData.nome !== 'Pedro Ojeda') {
+                        statusDiv.innerHTML += '<br><br>⚠️ <strong>Este NO es Pedro Ojeda</strong>';
+                        statusDiv.className = 'status warning';
+                    } else {
+                        statusDiv.innerHTML += '<br><br>✅ <strong>Pedro Ojeda está correctamente logueado</strong>';
+                        statusDiv.className = 'status success';
+                    }
+                } catch (error) {
+                    statusDiv.className = 'status warning';
+                    statusDiv.innerHTML = '⚠️ Error al leer datos del localStorage';
+                }
+            } else {
+                statusDiv.className = 'status warning';
+                statusDiv.innerHTML = '⚠️ No hay ningún usuario logueado';
+            }
+        }
+        
+        function limpiarLocalStorage() {
+            const statusDiv = document.getElementById('status');
+            
+            // Verificar si hay datos antes de limpiar
+            const usuarioLogado = localStorage.getItem('usuarioLogado');
+            
+            if (usuarioLogado) {
+                localStorage.removeItem('usuarioLogado');
+                statusDiv.className = 'status success';
+                statusDiv.innerHTML = '✅ <strong>LocalStorage limpiado exitosamente!</strong><br>Ahora puedes hacer login con Pedro Ojeda';
+            } else {
+                statusDiv.className = 'status info';
+                statusDiv.innerHTML = 'ℹ️ El localStorage ya estaba vacío';
+            }
+        }
+        
+        function irALogin() {
+            // Intentar ir a la página de login
+            const baseUrl = window.location.origin;
+            const loginUrl = baseUrl + '/';
+            
+            window.location.href = loginUrl;
+        }
+        
+        // Verificar automáticamente al cargar la página
+        window.onload = function() {
+            verificarUsuario();
+        };
+    </script>
+</body>
+</html>

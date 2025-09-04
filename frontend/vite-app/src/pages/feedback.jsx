@@ -58,7 +58,6 @@ export default function Feedback() {
               <div>👤 {capitalizeName(name)}</div>
               <div style={{ fontSize: '0.9rem', opacity: 0.9, marginTop: '0.5rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Cliente</div>
       </div>
-      <button onClick={handleLogout} className="logout-btn">🚪 Sair</button>
       <h1>Sugestões</h1>
       <textarea className='feedback-textarea'
         placeholder="Suas Sugestões..."
@@ -68,6 +67,7 @@ export default function Feedback() {
       <br />
       <button onClick={handleSubmit} className='btn-primary'>Enviar</button>
       <button onClick={handleVoltar} style={{ marginTop: 32 }}>Voltar</button>
+      <button onClick={handleLogout} className="logout-btn">🚪 Sair</button>
     </div>
   );
 }

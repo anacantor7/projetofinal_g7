@@ -1,19 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const Admin = require('../models/adminModel');
+const { authenticateAdmin, requirePermission } = require('../middlewares/adminAuth');
 
-// Obtener todos los administradores
-router.get('/', async (req, res) => {
+// Aplicar middleware de autenticação para todas as rotas admin
+router.use(authenticateAdmin);
+
+// Obtener todos los administradores - requer autenticação de admin
+router.get('/', requirePermission('view_admins'), async (req, res) => {
   try {
     const admins = await Admin.findAll();
     res.json(admins);
   } catch (error) {
+    console.error('Erro ao buscar administradores:', error);
     res.status(500).json({ error: 'Erro ao buscar administradores' });
   }
 });
 
-// Crear un nuevo administrador
-router.post('/', async (req, res) => {
+// Crear un nuevo administrador - requer autenticação de admin
+router.post('/', requirePermission('create_admin'), async (req, res) => {
   try {
     const { nome, email, senha } = req.body;
     const [admin, created] = await Admin.findOrCreate({
@@ -30,8 +35,22 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Actualizar un administrador
-router.put('/:id', async (req, res) => {
+// Buscar um administrador por ID - requer autenticação de admin
+router.get('/:id', requirePermission('view_admin'), async (req, res) => {
+  try {
+    const admin = await Admin.findByPk(req.params.id);
+    if (!admin) {
+      return res.status(404).json({ error: 'Administrador não encontrado' });
+    }
+    res.json(admin);
+  } catch (error) {
+    console.error('Erro ao buscar administrador:', error);
+    res.status(500).json({ error: 'Erro ao buscar administrador' });
+  }
+});
+
+// Actualizar un administrador - requer autenticação de admin
+router.put('/:id', requirePermission('update_admin'), async (req, res) => {
   try {
     const { nome, email, senha, ativo } = req.body;
     const admin = await Admin.findByPk(req.params.id);
@@ -41,12 +60,13 @@ router.put('/:id', async (req, res) => {
     await admin.update({ nome, email, senha, ativo });
     res.json(admin);
   } catch (error) {
+    console.error('Erro ao atualizar administrador:', error);
     res.status(500).json({ error: 'Erro ao atualizar admin' });
   }
 });
 
-// Eliminar un administrador
-router.delete('/:id', async (req, res) => {
+// Eliminar un administrador - requer autenticação de admin
+router.delete('/:id', requirePermission('delete_admin'), async (req, res) => {
   try {
     const admin = await Admin.findByPk(req.params.id);
     if (!admin) {
@@ -55,6 +75,7 @@ router.delete('/:id', async (req, res) => {
     await admin.destroy();
     res.json({ message: 'Admin eliminado com sucesso' });
   } catch (error) {
+    console.error('Erro ao eliminar administrador:', error);
     res.status(500).json({ error: 'Erro ao eliminar admin' });
   }
 });
