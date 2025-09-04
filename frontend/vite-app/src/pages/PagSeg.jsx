@@ -91,7 +91,7 @@ function PagSeg() {
     <div className="PagSeg-body">
       
       <div className="user-info">
-        <div className="userinfo" style={{ color: 'white' }}>👤 {capitalizeName(name)}</div>
+        <div className="userinfo" >👤 {capitalizeName(name)}</div>
         <div className="user-info-secondary">Cliente</div>
       </div>
       <h1 className="userinfo page-title">Bem-vindo, {capitalizeName(name)}</h1>

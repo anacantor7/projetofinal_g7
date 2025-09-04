@@ -43,6 +43,34 @@ function normalizeColor(val) {
   return s;
 }
 
+function hexToRgb(hex) {
+  if (!hex) return null;
+  const h = hex.replace(/[^0-9a-fA-F]/g, '');
+  if (h.length === 3) {
+    return { r: parseInt(h[0]+h[0],16), g: parseInt(h[1]+h[1],16), b: parseInt(h[2]+h[2],16) };
+  }
+  if (h.length === 6) {
+    return { r: parseInt(h.slice(0,2),16), g: parseInt(h.slice(2,4),16), b: parseInt(h.slice(4,6),16) };
+  }
+  return null;
+}
+
+function luminanceFromRgb(r,g,b) {
+  // convert sRGB to linear
+  const srgb = [r/255, g/255, b/255].map(v => {
+    return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4);
+  });
+  return 0.2126*srgb[0] + 0.7152*srgb[1] + 0.0722*srgb[2];
+}
+
+function contrastRatio(rgb1, rgb2) {
+  const L1 = luminanceFromRgb(rgb1.r, rgb1.g, rgb1.b);
+  const L2 = luminanceFromRgb(rgb2.r, rgb2.g, rgb2.b);
+  const lighter = Math.max(L1, L2);
+  const darker = Math.min(L1, L2);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 function findBlocks(content) {
   // crude CSS block splitter: selector { ... }
   const blocks = [];
@@ -85,9 +113,32 @@ function reportAndFixFile(filepath) {
       reports.push({ selector: b.selector, issue: 'color: white', colorRaw });
     }
 
+    // detect very light foregrounds by luminance
+    if (color) {
+      const rgbC = hexToRgb(color);
+      if (rgbC) {
+        const lumC = luminanceFromRgb(rgbC.r, rgbC.g, rgbC.b);
+        if (lumC > 0.9) {
+          reports.push({ selector: b.selector, issue: 'very-light-foreground', colorRaw, lum: lumC.toFixed(3) });
+        }
+      }
+    }
+
     // detect color == background (exact match)
     if (color && bg && color === bg) {
       reports.push({ selector: b.selector, issue: 'color equals background', colorRaw, bgRaw });
+    }
+
+    // detect low contrast if both present and can parse hex
+    if (color && bg) {
+      const rgbC = hexToRgb(color);
+      const rgbB = hexToRgb(bg);
+      if (rgbC && rgbB) {
+        const ratio = contrastRatio(rgbC, rgbB);
+        if (ratio < 4.5) {
+          reports.push({ selector: b.selector, issue: 'low-contrast', ratio: ratio.toFixed(2), colorRaw, bgRaw });
+        }
+      }
     }
 
     // apply fixes if requested
